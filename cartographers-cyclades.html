@@ -1,0 +1,3292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cyclades</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Marcellus&family=Special+Elite&display=swap" rel="stylesheet">
+<script>
+
+const CYCLADES_NAMES = [
+    "Mykonos","Delos","Naxos","Santorini",
+    "Serifos","Kea","Anafi","Iraklia",
+    "Paros","Milos","Syros","Tinos",
+    "Folegandros","Sikinos","Sifnos","Donousa"
+];
+
+const CYCLADES_LORE = {
+    "Mykonos":      "Its scattered granite boulders are the petrified bodies of the giants Heracles helped Zeus destroy in the Gigantomachy.",
+    "Delos":        "Sacred birthplace of Apollo and Artemis, this uninhabited island of ruins forbade anyone from being born or dying on its soil.",
+    "Naxos":        "Theseus abandoned Ariadne on its shore, where the god Dionysus found her and made her his bride.",
+    "Santorini":    "The island grew from a clod of earth an Argonaut cast into the sea, a gift from the sea god Triton.",
+    "Serifos":      "The infant Perseus washed ashore here, and years later turned its king to stone with the Gorgon's severed head.",
+    "Kea":          "Water nymphs here were driven off by a lion sent in the gods' jealousy, remembered today in its ancient stone lion carving.",
+    "Anafi":        "Apollo raised this island from the sea with a beam of light to shelter the storm-tossed Argonauts.",
+    "Iraklia":      "Named for the hero Heracles, a cave deep in its hills sheltered him after one of his famed labors.",
+    "Paros":        "Heracles landed here while questing for the Amazon queen's belt and slew the sons of Minos after they killed two of his crew.",
+    "Milos":        "Named for a friend of Adonis who, devastated by his death, hanged himself and was turned by Aphrodite into an apple tree.",
+    "Syros":        "Homer's Odyssey names this island, then called Syrie, as the birthplace of Eumaeus, the swineherd who helped Odysseus reclaim his throne.",
+    "Tinos":        "The island was once overrun by snakes, until Poseidon sent a flock of storks to drive them into the sea.",
+    "Folegandros":  "The island was named for a son of King Minos of Crete who settled here and gave it his name.",
+    "Sikinos":      "Named for Sicinus, son of the fugitive King Thoas of Lemnos and the water nymph Oenoe.",
+    "Sifnos":       "Apollo flooded the island's rich gold mines in anger after its people cheated him out of their yearly tribute.",
+    "Donousa":      "Dionysus hid Ariadne on this island after taking her from Theseus, who had left her behind on Naxos."
+};
+
+const CYCLADES_SOURCES = {
+    "Mykonos":      "https://en.wikipedia.org/wiki/Mykonos",
+    "Delos":        "https://en.wikipedia.org/wiki/Delos",
+    "Naxos":        "https://en.wikipedia.org/wiki/Naxos",
+    "Santorini":    "https://en.wikipedia.org/wiki/Santorini",
+    "Serifos":      "https://en.wikipedia.org/wiki/Polydectes",
+    "Kea":          "https://en.wikipedia.org/wiki/Kea_(island)",
+    "Anafi":        "https://en.wikipedia.org/wiki/Anafi",
+    "Iraklia":      "https://en.wikipedia.org/wiki/Heraclea_(island)",
+    "Paros":        "https://en.wikipedia.org/wiki/Nephalion",
+    "Milos":        "https://en.wikipedia.org/wiki/Melus_(companion_of_Adonis)",
+    "Syros":        "https://en.wikipedia.org/wiki/Eumaeus",
+    "Tinos":        "https://topostext.org/place/375252PTen",
+    "Folegandros":  "https://en.wikipedia.org/wiki/Folegandros",
+    "Sikinos":      "https://en.wikipedia.org/wiki/Thoas_(king_of_Lemnos)",
+    "Sifnos":       "https://topostext.org/place/370247PSip",
+    "Donousa":      "https://www.visitgreece.gr/en/islands/cyclades/donousa"
+};
+
+const CYCLADES_LORE_FR = {
+    "Mykonos":      "Ses blocs de granit épars sont les corps pétrifiés des géants qu'Héraclès aida Zeus à vaincre lors de la Gigantomachie.",
+    "Delos":        "Berceau sacré d'Apollon et d'Artémis, cette île inhabitée et couverte de ruines interdisait qu'on y naisse ou qu'on y meure.",
+    "Naxos":        "Thésée y abandonna Ariane, et le dieu Dionysos la trouva et en fit son épouse.",
+    "Santorini":    "L'île naquit d'une motte de terre qu'un Argonaute jeta à la mer, don du dieu marin Triton.",
+    "Serifos":      "Le petit Persée y échoua enfant, avant d'y changer plus tard son roi en pierre grâce à la tête de la Gorgone.",
+    "Kea":          "Des nymphes des eaux furent chassées ici par un lion envoyé par la jalousie des dieux, souvenir gravé dans son antique lion de pierre.",
+    "Anafi":        "Apollon fit surgir cette île de la mer d'un trait de lumière pour abriter les Argonautes pris dans la tempête.",
+    "Iraklia":      "Nommée en l'honneur du héros Héraclès, une grotte au cœur de ses collines l'abrita après l'un de ses travaux légendaires.",
+    "Paros":        "Héraclès y accosta lors de sa quête de la ceinture de la reine des Amazones et y tua les fils de Minos après qu'ils eurent tué deux de ses compagnons.",
+    "Milos":        "Nommée d'après un ami d'Adonis qui, dévasté par sa mort, se pendit et fut changé par Aphrodite en pommier.",
+    "Syros":        "L'Odyssée d'Homère situe sur cette île, alors appelée Syrié, la naissance d'Eumée, le porcher qui aida Ulysse à reconquérir son trône.",
+    "Tinos":        "L'île fut jadis envahie de serpents, jusqu'à ce que Poséidon envoie une volée de cigognes pour les chasser vers la mer.",
+    "Folegandros":  "L'île tient son nom d'un fils du roi Minos de Crète venu s'y établir.",
+    "Sikinos":      "Nommée d'après Sicinos, fils du roi fugitif Thoas de Lemnos et de la nymphe des eaux Oenoé.",
+    "Sifnos":       "Apollon inonda les riches mines d'or de l'île, furieux que ses habitants l'aient privé de leur tribut annuel.",
+    "Donousa":      "Dionysos y cacha Ariane après l'avoir prise à Thésée, qui l'avait abandonnée à Naxos."
+};
+</script>
+<script>
+
+const ZEUS_STORIES = {
+    en:[
+        "When Prometheus stole fire and gave it to mortals, Zeus's fury shook Olympus. He chained the titan to a mountain, sending an eagle each day to tear at his liver, only for it to regrow overnight.",
+        "Salmoneus, king of Elis, dared to imitate Zeus by dragging bronze cauldrons and torches behind his chariot to mimic thunder and lightning. Zeus, enraged by the mockery, struck him down with a real thunderbolt.",
+        "When the earth-born giants rose up to storm Olympus in the Gigantomachy, Zeus unleashed his lightning without mercy, hurling bolt after bolt until the earth itself trembled and the rebellion was buried in ruin.",
+        "Ixion, welcomed as a guest among the gods, betrayed that trust by trying to seduce Hera. Zeus's anger was so total that he bound him forever to a spinning wheel of fire.",
+        "When Lycaon tested Zeus by serving him human flesh at a feast, the god's rage was instant. He struck the table with lightning and transformed the king into a wolf.",
+        "Angered by humanity's wickedness, Zeus resolved to wipe the world clean. He sent a great flood over the earth, sparing only Deucalion and Pyrrha, the few who remained just and faithful.",
+        "When the monstrous Typhon rose to challenge the gods, Zeus met him in a war that scorched mountains and boiled rivers, hurling thunderbolt after thunderbolt until the beast was buried beneath Mount Etna.",
+        "Asclepius grew so skilled in healing that he began raising the dead, upsetting the balance of the underworld. Zeus, fearing this defiance of fate, struck him down with a single bolt.",
+        "Tantalus tried to test the gods' omniscience by serving them his own son at a banquet. Zeus, disgusted and enraged, condemned him to eternal hunger and thirst in the underworld.",
+        "When Phaethon lost control of his father's sun chariot and threatened to scorch the earth entirely, Zeus struck him from the sky with a thunderbolt to save the world from burning.",
+        "Sisyphus cheated death not once but twice, mocking the natural order. Zeus's anger at his defiance condemned him to forever push a boulder up a hill, only to watch it roll back down.",
+        "As Capaneus scaled the walls of besieged Thebes, he boasted that not even Zeus could stop him from burning the city. Zeus struck him down mid-climb with a thunderbolt for his blasphemy."
+    ],
+    fr:[
+        "Quand Prométhée vola le feu pour le donner aux mortels, la fureur de Zeus ébranla l'Olympe. Il enchaîna le titan à une montagne, envoyant chaque jour un aigle lui dévorer le foie, qui repoussait la nuit venue.",
+        "Salmonée, roi d'Élide, osa imiter Zeus en traînant des chaudrons de bronze et des torches derrière son char pour simuler le tonnerre et l'éclair. Zeus, furieux de cette moquerie, l'abattit d'un vrai coup de foudre.",
+        "Quand les Géants nés de la Terre s'élevèrent pour assiéger l'Olympe lors de la Gigantomachie, Zeus déchaîna sa foudre sans pitié, frappant coup sur coup jusqu'à ce que la terre tremble et que la révolte soit ensevelie sous les ruines.",
+        "Ixion, accueilli comme invité chez les dieux, trahit cette confiance en tentant de séduire Héra. La colère de Zeus fut telle qu'il l'attacha pour toujours à une roue de feu tournoyante.",
+        "Quand Lycaon voulut tester Zeus en lui servant de la chair humaine lors d'un festin, la rage du dieu fut immédiate. Il frappa la table de sa foudre et transforma le roi en loup.",
+        "Furieux de la méchanceté des hommes, Zeus décida de purifier le monde. Il envoya un grand déluge sur la terre, n'épargnant que Deucalion et Pyrrha, les rares âmes restées justes et fidèles.",
+        "Quand le monstrueux Typhon s'éleva pour défier les dieux, Zeus l'affronta dans une guerre qui embrasa les montagnes et fit bouillir les rivières, enchaînant les coups de foudre jusqu'à l'ensevelir sous le mont Etna.",
+        "Asclépios devint si habile en médecine qu'il se mit à ressusciter les morts, bouleversant l'équilibre des enfers. Zeus, craignant cette atteinte au destin, l'abattit d'un seul coup de foudre.",
+        "Tantale voulut tester l'omniscience des dieux en leur servant son propre fils lors d'un banquet. Zeus, révulsé et furieux, le condamna à une faim et une soif éternelles aux enfers.",
+        "Quand Phaéton perdit le contrôle du char de son père le Soleil et menaça d'embraser la terre entière, Zeus le frappa du ciel d'un coup de foudre pour sauver le monde des flammes.",
+        "Sisyphe trompa la mort à deux reprises, défiant l'ordre naturel. La colère de Zeus face à cette insolence le condamna à pousser éternellement un rocher en haut d'une colline, le voyant retomber sans cesse.",
+        "Alors que Capanée escaladait les murs de Thèbes assiégée, il se vanta que même Zeus ne pourrait l'empêcher d'incendier la ville. Zeus le foudroya en pleine ascension pour ce blasphème."
+    ]
+};
+const ZEUS_TITLE = { en:"The Wrath of Zeus", fr:"La Colère de Zeus" };
+
+const ZEUS_RESTING_TITLE = { en:"The Repose of Zeus", fr:"Le Repos de Zeus" };
+const ZEUS_RESTING_STORY = {
+    en:"During the Trojan War, Hera seduced Zeus on Mount Ida and had Hypnos lull him into a deep sleep, freeing Poseidon to aid the Greeks while the king of the gods rested.",
+    fr:"Pendant la guerre de Troie, Héra séduisit Zeus sur le mont Ida et fit appel à Hypnos pour l'endormir profondément, permettant à Poséidon d'aider librement les Grecs pendant que le roi des dieux se reposait."
+};
+const ZEUS_RESTING_SOURCE = "https://en.wikipedia.org/wiki/Deception_of_Zeus";
+
+const ZEUS_SOURCES = [
+    "https://en.wikipedia.org/wiki/Prometheus",
+    "https://en.wikipedia.org/wiki/Salmoneus",
+    "https://en.wikipedia.org/wiki/Gigantomachy",
+    "https://en.wikipedia.org/wiki/Ixion",
+    "https://en.wikipedia.org/wiki/Lycaon_(king_of_Arcadia)",
+    "https://en.wikipedia.org/wiki/Deucalion",
+    "https://en.wikipedia.org/wiki/Typhon",
+    "https://en.wikipedia.org/wiki/Asclepius",
+    "https://en.wikipedia.org/wiki/Tantalus",
+    "https://en.wikipedia.org/wiki/Phaethon",
+    "https://en.wikipedia.org/wiki/Sisyphus",
+    "https://en.wikipedia.org/wiki/Capaneus"
+];
+</script>
+<script>
+
+const RULE_TYPES = ["🟢","⚫️","🔴","🟡🔵"];
+
+const RULE_POOL = {
+    en:{
+        "⚫️":[
+            "Earn 11 reputation stars for each completed island",
+            "Earn 5 reputation stars for each island with 4 different terrain types (forest, village, farm, water)",
+            "Earn 4 reputation stars for each 2x2 block of spaces, on the same island, with 4 different terrain types (mountain, monster, hero, and Zeus lightning spaces included)"
+        ],
+        "🔴":[
+            "Earn 1 reputation star for each cluster of village spaces",
+            "Earn 7 reputation stars for each cluster of 4 or more village spaces completely surrounded by the island's edge or by filled spaces",
+            "Earn 3 reputation stars for each village space in your 3rd largest cluster of village spaces"
+        ],
+        "🟡🔵":[
+            "Earn 1 reputation star for each farm space not adjacent to the island's edge. Earn 1 reputation star for each edge that separates two waters",
+            "Earn 5 reputation stars for each island with an equal number of farm and water spaces (at least 1 of each)",
+            "Earn 2 reputation stars for each edge shared by a farm space and a water space"
+        ],
+        "🟢":[
+            "Earn 3 reputation stars for each row in which every island present has a forest space in that row",
+            "Earn 4 reputation stars for each island whose number of forest spaces is unique among all islands on the map",
+            "Select two islands that are not adjacent to each other. Earn 1 reputation star for each forest space on those two islands"
+        ]
+    },
+    fr:{
+        "⚫️":[
+            "Gagnez 11 étoiles de réputation par île complétée",
+            "Gagnez 5 étoiles de réputation par île avec 4 types de terrain différents (forêt, village, champs, eau)",
+            "Gagnez 4 étoiles de réputation par bloc de 2x2 cases, sur la même île, avec 4 types de terrain différents (montagne, monstre, héros et foudre de Zeus inclus)"
+        ],
+        "🔴":[
+            "Gagnez 1 étoile de réputation par groupe de cases village",
+            "Gagnez 7 étoiles de réputation par groupe de 4 cases village ou plus entièrement entouré par le bord de l'île ou par des cases remplies",
+            "Gagnez 3 étoiles de réputation par case village de votre 3e plus grand groupe de cases village"
+        ],
+        "🟡🔵":[
+            "Gagnez 1 étoile de réputation par case champs non adjacente au bord de l'île. Gagnez 1 étoile de réputation par bord séparant deux cases eau",
+            "Gagnez 5 étoiles de réputation par île comptant un nombre égal de cases champs et de cases eau (au moins 1 de chaque)",
+            "Gagnez 2 étoiles de réputation par bord partagé entre une case champs et une case eau"
+        ],
+        "🟢":[
+            "Gagnez 3 étoiles de réputation par ligne où chaque île présente possède une case forêt sur cette ligne",
+            "Gagnez 4 étoiles de réputation par île dont le nombre de cases forêt est unique parmi toutes les îles de la carte",
+            "Choisissez deux îles qui ne sont pas adjacentes l'une à l'autre. Gagnez 1 étoile de réputation par case forêt sur ces deux îles"
+        ]
+    }
+};
+</script>
+<style>
+*{
+    box-sizing:border-box;
+    max-width:100%;
+    min-width:0;
+}
+html{
+    overflow-x:hidden;
+    width:100%;
+    box-sizing:border-box;
+    touch-action:pan-y;
+}
+body{
+    overflow-x:hidden;
+    touch-action:pan-y;
+}
+body{
+    margin:0;
+    font-family:'Marcellus', 'Trebuchet MS', Arial, sans-serif;
+    text-align:center;
+    background:#ffffff;
+    padding:8px;
+    color:#1b3a52;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    box-sizing:border-box;
+    overflow-x:hidden;
+}
+.topbar{
+    position:relative;
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    min-height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.topbar-left{
+    position:absolute;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+}
+.topbar-right{
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+}
+.seed-label{
+    font-size:13px;
+    font-weight:bold;
+    color:#0d3b66;
+    white-space:nowrap;
+}
+.seed-field{
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    border:1px solid #0d3b66;
+    border-radius:8px;
+    background:white;
+    padding:6px 2px;
+    font-family:'Special Elite', 'Courier New', monospace;
+    font-size:12px;
+    font-weight:normal;
+    letter-spacing:0;
+    color:#0d3b66;
+    width:76px;
+    min-height:36px;
+    text-align:center;
+}
+.seed-field::placeholder{
+    color:#6d8aa3;
+    font-weight:normal;
+}
+.toggle-row{
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+    width:100%;
+    max-width:480px;
+    margin:8px auto 0;
+}
+.toggle-label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:bold;
+    color:#0d3b66;
+    cursor:pointer;
+    user-select:none;
+}
+.toggle-label.disabled{
+    opacity:.4;
+    cursor:default;
+}
+.toggle-label.disabled input{
+    cursor:default;
+}
+.reset-btn{
+    width:28px;
+    height:28px;
+    min-height:28px;
+    padding:0;
+    margin:0;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    color:#0d3b66;
+    border:none;
+}
+.settings-header-row{
+    justify-content:flex-start;
+    gap:4px;
+}
+.settings-toggle-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 2px;
+    margin:0;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:bold;
+    min-height:36px;
+    border-radius:0;
+    background:none;
+    color:#0d3b66;
+    border:none;
+}
+.settings-toggle-icon{
+    display:inline-block;
+    transition:transform .15s;
+    font-size:15px;
+}
+.settings-toggle-icon.expanded{
+    transform:rotate(90deg);
+}
+.settings-panel-body{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+}
+#mapSelectWrap{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+    gap:10px;
+    width:100%;
+    max-width:480px;
+    margin:8px auto 0;
+}
+.wasteland-group{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.wasteland-group.disabled{
+    opacity:.4;
+}
+.code-group{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+.copy-code-btn{
+    width:24px;
+    height:24px;
+    min-height:24px;
+    padding:0;
+    margin:0;
+    flex-shrink:0;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    color:#0d3b66;
+    border:none;
+    transition:color .15s;
+}
+.copy-code-btn.copied{
+    color:#2e8b57;
+}
+.extra-row{
+    row-gap:10px;
+}
+.wasteland-label{
+    font-size:13px;
+    font-weight:bold;
+    color:#0d3b66;
+    white-space:nowrap;
+}
+.stepper-stack{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    height:36px;
+}
+.stepper-arrow{
+    width:22px;
+    flex:1;
+    min-height:0;
+    padding:0;
+    margin:0;
+    border-radius:4px;
+    font-size:9px;
+    font-weight:bold;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    color:#0d3b66;
+    border:1.5px solid #0d3b66;
+    cursor:pointer;
+}
+.stepper-arrow:disabled{
+    opacity:.35;
+    cursor:default;
+}
+.wasteland-value{
+    font-size:13px;
+    font-weight:bold;
+    font-family:inherit;
+    color:#0d3b66;
+    width:1.8em;
+    min-width:1.8em;
+    min-height:36px;
+    text-align:center;
+    border:1px solid #0d3b66;
+    border-radius:8px;
+    padding:6px 1px;
+    background:white;
+}
+.wasteland-value:disabled{
+    border-color:#8c8c8c;
+    background:#f0f0f0;
+    color:#8c8c8c;
+}
+.map-select-full:disabled{
+    opacity:.85;
+    cursor:default;
+    background-image:none;
+    padding-right:14px;
+}
+.map-select-full{
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    transform:none;
+    display:block;
+    width:92px;
+    flex-shrink:0;
+    margin:0;
+    padding:6px 26px 6px 10px;
+    font-size:12px;
+    font-weight:bold;
+    font-family:inherit;
+    border-radius:8px;
+    border:1px solid #0d3b66;
+    min-height:36px;
+    text-align:center;
+    text-align-last:center;
+    color:#0d3b66;
+    background:white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d3b66"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 6px center;
+    background-size:16px;
+    cursor:pointer;
+}
+.lang-select{
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    margin:0;
+    padding:3px 18px 3px 8px;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:bold;
+    border-radius:14px;
+    border:1.5px solid #0d3b66;
+    min-height:26px;
+    min-width:44px;
+    text-align:center;
+    text-align-last:center;
+    color:#0d3b66;
+    background:white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230d3b66"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 4px center;
+    background-size:14px;
+    cursor:pointer;
+}
+h2{
+    color:#0d3b66;
+    letter-spacing:2px;
+    margin:0;
+    font-size:31px;
+    text-align:center;
+    font-family:'Cinzel', 'Trebuchet MS', Arial, sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+}
+.controls{
+    margin:8px auto;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:12px;
+    width:100%;
+    max-width:480px;
+}
+.control-row{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:10px;
+    flex-wrap:wrap;
+}
+label{
+    font-size:14px;
+}
+select, input[type=checkbox]{
+    transform:scale(1.15);
+}
+select{
+    padding:6px 10px;
+    font-size:14px;
+    border-radius:6px;
+    border:1px solid #0d3b66;
+}
+button{
+    padding:12px 22px;
+    font-size:14px;
+    font-weight:bold;
+    margin:10px 6px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    background:#0d3b66;
+    color:white;
+    transition:transform .1s;
+    min-height:44px;
+    font-family:inherit;
+}
+.refresh-btn{
+    width:44px;
+    height:44px;
+    min-height:44px;
+    padding:0;
+    margin:0;
+    border-radius:50%;
+    font-size:19px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    color:#0d3b66;
+    border:2px solid #0d3b66;
+}
+.zeus-btn{
+    width:44px;
+    height:44px;
+    min-height:44px;
+    padding:0;
+    margin:0;
+    border-radius:50%;
+    font-size:19px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#d9a441;
+    color:#fff;
+    border:2px solid #b8860b;
+    box-shadow:0 2px 6px rgba(184,134,11,.4);
+}
+.zeus-reset-btn{
+    width:28px;
+    height:28px;
+    min-height:28px;
+    padding:0;
+    margin:0;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    color:#d9a441;
+    border:none;
+}
+.zeus-result{
+    margin:0;
+    font-size:12px;
+    font-weight:bold;
+    color:#b8860b;
+    min-height:1.2em;
+    text-align:left;
+}
+.zeus-result.clickable{
+    cursor:pointer;
+    text-decoration:underline;
+    text-decoration-style:dotted;
+    text-underline-offset:2px;
+}
+.view-menu{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    margin:8px auto 0;
+    border:1px solid #0d3b66;
+    border-radius:8px;
+    overflow:hidden;
+    background:white;
+}
+.view-tab{
+    flex:1;
+    margin:0;
+    min-height:44px;
+    padding:8px 12px;
+    border:0;
+    border-radius:0;
+    background:white;
+    color:#0d3b66;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.view-tab + .view-tab{
+    border-left:1px solid #0d3b66;
+}
+.view-tab.active{
+    background:#0d3b66;
+    color:white;
+}
+.view-tab:disabled{
+    color:#a9b8c7;
+    cursor:not-allowed;
+}
+.rules-box{
+    width:100%;
+    max-width:480px;
+    padding:10px 0;
+    font-size:12px;
+    line-height:1.4;
+    background:transparent;
+    border:none;
+    border-radius:0;
+    margin:2px auto 0;
+    text-align:left;
+    box-sizing:border-box;
+}
+.season-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    min-height:44px;
+    margin:0 0 10px;
+    padding:8px 12px;
+    border:1px solid #0d3b66;
+    border-radius:8px;
+    background:white;
+    color:#0d3b66;
+    font-size:14px;
+    font-weight:bold;
+    font-family:inherit;
+    cursor:pointer;
+}
+.season-btn-icon{
+    font-size:20px;
+    line-height:1;
+}
+.season-btn-timer{
+    opacity:.7;
+    font-weight:normal;
+}
+.rules-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.rule-item{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:9px 10px;
+    border:1px solid rgba(13,59,102,.18);
+    border-radius:7px;
+    background:rgba(255,255,255,.7);
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+.rule-item.season-highlight{
+    border-color:#0d3b66;
+    background:rgba(13,59,102,.1);
+}
+.rule-item.season-highlight .rule-copy,
+.rule-item.season-highlight .rule-type{
+    font-weight:bold;
+}
+.rule-letter{
+    flex:0 0 24px;
+    font-weight:bold;
+    color:#0d3b66;
+}
+.rule-type{
+    flex:0 0 34px;
+    font-size:17px;
+    line-height:1.25;
+}
+.rule-copy{
+    flex:1;
+    font-size:12px;
+    line-height:1.35;
+}
+.rule-copy-hint{
+    font-style:italic;
+}
+button:active{
+    transform:scale(.96);
+}
+#legend{
+    display:flex;
+    justify-content:center;
+    width:100%;
+    max-width:480px;
+    margin:12px auto 0;
+    padding:0;
+    box-sizing:border-box;
+    min-height:70px;
+}
+.legend-hint{
+    font-size:12px;
+    opacity:.65;
+    margin:0;
+}
+.legend-item{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background:rgba(255,255,255,.7);
+    border:1px solid rgba(13,59,102,.25);
+    border-radius:8px;
+    padding:10px 14px;
+    width:100%;
+    box-sizing:border-box;
+    text-align:left;
+}
+.print-btn{
+    width:36px;
+    height:36px;
+    min-height:36px;
+    padding:0;
+    margin:0;
+    border-radius:0;
+    font-size:17px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    color:#0d3b66;
+    border:none;
+}
+.info-btn{
+    width:36px;
+    height:36px;
+    min-height:36px;
+    padding:0;
+    margin:0;
+    border-radius:0;
+    font-size:17px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    color:#0d3b66;
+    border:none;
+}
+.info-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(8,15,25,.92);
+    z-index:1000;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    box-sizing:border-box;
+    overflow:auto;
+}
+.info-overlay.active{
+    display:flex;
+}
+.info-box{
+    background:#fdfaf3;
+    border-radius:10px;
+    width:100%;
+    max-width:480px;
+    max-height:80vh;
+    box-sizing:border-box;
+    box-shadow:0 4px 20px rgba(0,0,0,.5);
+    text-align:left;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+}
+.info-box-scroll{
+    overflow:auto;
+    padding:20px;
+    box-sizing:border-box;
+    flex:1;
+    min-height:0;
+}
+.info-box h3{
+    color:#0d3b66;
+    margin:0 0 12px;
+    padding-right:26px;
+    font-size:17px;
+}
+.info-box p{
+    color:#222;
+    font-size:13px;
+    line-height:1.5;
+    margin:0 0 12px;
+}
+.info-box h4{
+    color:#0d3b66;
+    font-size:14px;
+    margin:18px 0 6px;
+}
+.info-box h4:first-child{
+    margin-top:0;
+}
+.info-box ul{
+    margin:0 0 12px;
+    padding-left:18px;
+}
+.info-box li{
+    color:#222;
+    font-size:13px;
+    line-height:1.5;
+    margin:0 0 6px;
+}
+.info-box strong{
+    color:#0d3b66;
+}
+.info-box a{
+    color:#0d3b66;
+}
+.info-box-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:26px;
+    height:26px;
+    min-height:26px;
+    padding:0;
+    margin:0;
+    border:none;
+    border-radius:50%;
+    background:rgba(13,59,102,.6);
+    color:#fff;
+    opacity:.9;
+    font-size:17px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.save-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(8,15,25,.92);
+    z-index:1000;
+    flex-direction:column;
+    align-items:center;
+    padding:16px;
+    box-sizing:border-box;
+    overflow:auto;
+}
+.save-overlay.active{
+    display:flex;
+}
+.save-overlay-hint{
+    color:#fff;
+    font-size:13px;
+    text-align:center;
+    margin:0 0 12px;
+    max-width:480px;
+}
+.save-overlay img{
+    max-width:100%;
+    width:100%;
+    max-width:480px;
+    height:auto;
+    border-radius:6px;
+    box-shadow:0 4px 20px rgba(0,0,0,.5);
+}
+.save-overlay-close{
+    position:fixed;
+    top:16px;
+    right:16px;
+    width:30px;
+    height:30px;
+    min-height:30px;
+    padding:0;
+    margin:0;
+    border:none;
+    border-radius:50%;
+    background:rgba(8,15,25,.6);
+    color:#fff;
+    opacity:.9;
+    font-size:19px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.swatch{
+    width:16px;
+    height:16px;
+    border-radius:3px;
+    border:1px solid rgba(0,0,0,.35);
+    margin-top:2px;
+    flex-shrink:0;
+}
+.legend-text{
+    display:flex;
+    flex-direction:column;
+}
+.legend-name{
+    font-weight:bold;
+    font-size:13px;
+    color:#0d3b66;
+}
+.legend-desc{
+    font-size:11px;
+    opacity:.8;
+    line-height:1.35;
+    margin-top:2px;
+}
+.source-link{
+    text-decoration:none;
+    margin-left:4px;
+    opacity:1;
+    cursor:pointer;
+}
+.legend-close-btn{
+    flex-shrink:0;
+    align-self:flex-start;
+    margin-left:auto;
+    width:22px;
+    height:22px;
+    min-height:22px;
+    padding:0;
+    border:none;
+    border-radius:50%;
+    background:transparent;
+    color:#0d3b66;
+    opacity:.6;
+    font-size:18px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.map-wrap{
+    width:100%;
+    max-width:480px;
+    margin:8px auto 0;
+}
+.map-row{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+}
+.row-labels{
+    flex:0 0 auto;
+    width:18px;
+    margin-right:4px;
+    display:flex;
+    flex-direction:column;
+}
+.row-labels span{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    color:#0d3b66;
+}
+.map-row-bottom{
+    display:flex;
+    justify-content:center;
+}
+.corner-spacer{
+    flex:0 0 auto;
+    width:22px;
+}
+.coords-corner-btn{
+    padding:0;
+    margin:0;
+    background:transparent;
+    border:none;
+    color:#0d3b66;
+    font-size:14px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.col-labels{
+    display:flex;
+    flex-direction:row;
+}
+.col-labels span{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    color:#0d3b66;
+    padding-top:3px;
+}
+canvas{
+    border:3px solid #0d3b66;
+    margin:0;
+    background:transparent;
+    border-radius:0;
+    width:100%;
+    max-width:480px;
+    min-width:0;
+    height:auto;
+    display:block;
+    cursor:pointer;
+    flex-shrink:1;
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-left">
+        <button id="generateBtn" class="refresh-btn" onclick="shuffleMap()" aria-label="Draw map" title="Draw map">🌀</button>
+        <button id="printBtn" class="print-btn" onclick="printMapAndRules()" aria-label="View map and edicts as image" title="View map and edicts as image">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
+        </button>
+    </div>
+    <h2>Κυκλάδες</h2>
+    <div class="topbar-right">
+        <button id="infoBtn" class="info-btn" onclick="openInfoBox()" aria-label="Information" title="Information">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.5" r="0.75" fill="currentColor" stroke="none"/></svg>
+        </button>
+                <select id="langToggle" class="lang-select" onchange="setLang(this.value)" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+        </select>
+    </div>
+</div>
+<div class="toggle-row">
+    <label class="toggle-label">
+        <input type="checkbox" id="randomMapToggle" onchange="toggleRandomMap(this.checked)">
+        <span id="randomMapLabelText">Random map</span>
+    </label>
+    <label class="toggle-label">
+        <input type="checkbox" id="cycladesToggle" checked onchange="toggleCyclades(this.checked)">
+        <span id="cycladesLabelText">Cyclades</span>
+    </label>
+    <span id="codeGroup" class="code-group">
+    <span class="seed-label" id="seedLabelText">Code</span>
+    <input id="randomSeedInput" class="seed-field" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Map code" placeholder="Code">
+    <button type="button" id="copyCodeBtn" class="copy-code-btn" onclick="copyShareCode()" aria-label="Copy code" title="Copy code">
+        <svg id="copyCodeIcon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    </span>
+</div>
+
+<div id="mapSelectWrap">
+<select id="mapSelect" class="map-select-full" aria-label="Map">
+    <option id="mapOptionA" value="C1" selected>Map A</option><option id="mapOptionB" value="C2">Map B</option><option id="mapOptionC" value="A">Map C</option><option id="mapOptionD" value="B">Map D</option><option id="mapOptionN1" value="C">Map N1</option><option id="mapOptionN2" value="D">Map N2</option>
+</select>
+</div>
+
+<div id="settingsPanelHeaderRow" class="toggle-row settings-header-row">
+    <button type="button" id="settingsToggleBtn" class="settings-toggle-btn" onclick="toggleSettingsPanel()" aria-expanded="false" aria-controls="settingsPanelBody">
+        <span id="settingsToggleIcon" class="settings-toggle-icon">▸</span>
+        <span id="settingsToggleLabel">Settings</span>
+    </button>
+    <button type="button" id="resetRandomBtn" class="reset-btn" onclick="resetRandomDefaults()" aria-label="Reset default settings" title="Reset default settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+    </button>
+</div>
+
+<div id="settingsPanelBody" class="settings-panel-body">
+<div id="extraControlsRow" class="toggle-row extra-row">
+    <span id="rowsGroup" class="wasteland-group">
+    <span class="wasteland-label" id="rowsLabelText">Rows</span>
+    <input id="rowsValue" class="wasteland-value" type="text" inputmode="numeric" aria-label="Rows"
+        onchange="setRowsFromInput(this.value)"
+        onkeydown="if(event.key==='Enter') this.blur()">
+    <span class="stepper-stack">
+    <button type="button" id="rowsUp" class="stepper-arrow" onclick="adjustRows(1)" aria-label="More rows">▲</button>
+    <button type="button" id="rowsDown" class="stepper-arrow" onclick="adjustRows(-1)" aria-label="Fewer rows">▼</button>
+    </span>
+    </span>
+    <span id="colsGroup" class="wasteland-group">
+    <span class="wasteland-label" id="colsLabelText">Cols</span>
+    <input id="colsValue" class="wasteland-value" type="text" inputmode="numeric" aria-label="Columns"
+        onchange="setColsFromInput(this.value)"
+        onkeydown="if(event.key==='Enter') this.blur()">
+    <span class="stepper-stack">
+    <button type="button" id="colsUp" class="stepper-arrow" onclick="adjustCols(1)" aria-label="More columns">▲</button>
+    <button type="button" id="colsDown" class="stepper-arrow" onclick="adjustCols(-1)" aria-label="Fewer columns">▼</button>
+    </span>
+    </span>
+    <span id="wastelandGroup" class="wasteland-group">
+    <span class="wasteland-label" id="wastelandLabelText">Wastelands</span>
+    <input id="wastelandValue" class="wasteland-value" type="text" inputmode="numeric" aria-label="Wastelands"
+        onchange="setWastelandFromInput(this.value)"
+        onkeydown="if(event.key==='Enter') this.blur()">
+    <span class="stepper-stack">
+    <button type="button" id="wastelandUp" class="stepper-arrow" onclick="adjustWasteland(1)" aria-label="More wastelands">▲</button>
+    <button type="button" id="wastelandDown" class="stepper-arrow" onclick="adjustWasteland(-1)" aria-label="Fewer wastelands">▼</button>
+    </span>
+    </span>
+    <span id="mountainsGroup" class="wasteland-group">
+    <span class="wasteland-label" id="mountainsLabelText">Mountains</span>
+    <input id="mountainsValue" class="wasteland-value" type="text" inputmode="numeric" aria-label="Mountains"
+        onchange="setMountainsFromInput(this.value)"
+        onkeydown="if(event.key==='Enter') this.blur()">
+    <span class="stepper-stack">
+    <button type="button" id="mountainsUp" class="stepper-arrow" onclick="adjustMountains(1)" aria-label="More mountains">▲</button>
+    <button type="button" id="mountainsDown" class="stepper-arrow" onclick="adjustMountains(-1)" aria-label="Fewer mountains">▼</button>
+    </span>
+    </span>
+    <span id="templesGroup" class="wasteland-group">
+    <span class="wasteland-label" id="templesLabelText">Ruins</span>
+    <input id="templesValue" class="wasteland-value" type="text" inputmode="numeric" aria-label="Ruins"
+        onchange="setTemplesFromInput(this.value)"
+        onkeydown="if(event.key==='Enter') this.blur()">
+    <span class="stepper-stack">
+    <button type="button" id="templesUp" class="stepper-arrow" onclick="adjustTemples(1)" aria-label="More ruins">▲</button>
+    <button type="button" id="templesDown" class="stepper-arrow" onclick="adjustTemples(-1)" aria-label="Fewer ruins">▼</button>
+    </span>
+    </span>
+    <label class="toggle-label" id="volcanoToggleWrap">
+        <input type="checkbox" id="volcanoToggle" onchange="toggleVolcano(this.checked)">
+        <span id="volcanoLabelText">Volcano</span>
+    </label>
+</div>
+</div>
+
+<div class="controls">
+    <div class="control-row">
+        <button id="zeusBtn" class="zeus-btn" onclick="drawZeus()" aria-label="Strike lightning" title="Strike lightning">⚡️</button>
+        <p id="zeusResult" class="zeus-result"></p>
+        <button id="zeusResetBtn" class="zeus-reset-btn" onclick="resetZeus()" aria-label="Reset lightning" title="Reset lightning" style="display:none;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+    </div>
+</div>
+
+<div class="view-menu" role="tablist" aria-label="Map or edicts">
+    <button id="mapTab" class="view-tab active" type="button" role="tab" aria-selected="true" onclick="setViewMode('map')">Map</button>
+    <button id="rulesTab" class="view-tab" type="button" role="tab" aria-selected="false" onclick="setViewMode('rules')">Edicts</button>
+</div>
+
+<div id="rulesText" class="rules-box" hidden aria-live="polite"></div>
+
+<div id="mapWrap" class="map-wrap">
+    <div class="map-row">
+        <div id="rowLabels" class="row-labels"></div>
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="map-row-bottom">
+        <button type="button" id="coordsBtn" class="corner-spacer coords-corner-btn" onclick="toggleCoordList()" aria-label="Mountain & ruins coordinates" title="Mountain & ruins coordinates">🧭</button>
+        <div id="colLabels" class="col-labels"></div>
+    </div>
+</div>
+<div id="legend">
+    <p id="tapHint" class="legend-hint">Tap an island to see its story</p>
+    <div id="islandInfo" class="legend-item" style="display:none;">
+        <span class="swatch" id="infoSwatch"></span>
+        <span class="legend-text">
+            <span class="legend-name" id="infoName"></span>
+            <span class="legend-desc" id="infoDesc"></span>
+        </span>
+        <button type="button" id="islandInfoClose" class="legend-close-btn" onclick="resetIslandInfo()">×</button>
+    </div>
+</div>
+
+<div id="saveOverlay" class="save-overlay">
+    <p id="saveOverlayHint" class="save-overlay-hint">Press and hold the image to save it.</p>
+    <img id="saveOverlayImg" alt="Cyclades map and edicts">
+    <button type="button" id="saveOverlayClose" class="save-overlay-close" onclick="closeSaveOverlay()">×</button>
+</div>
+
+<div id="infoOverlay" class="info-overlay">
+    <div class="info-box">
+        <button type="button" id="infoBoxClose" class="info-box-close" onclick="closeInfoBox()">×</button>
+        <div class="info-box-scroll">
+            <h3 id="infoBoxTitle">About</h3>
+            <div id="infoBoxText"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const INFO_HTML = {
+    en:
+        '<h4>What this is</h4>' +
+        '<p>This is a fan-made expansion for <em>Cartographers</em>, inspired by Greek mythology and the islands of the Cyclades. It adds two independent modules — <strong>Cyclades</strong> and <strong>Zeus</strong> — that can be used separately or together. It also works as a general <strong>map generator</strong> for the base game and for the Nebblis map.</p>' +
+        '<h4>Cyclades expansion</h4>' +
+        '<p><strong>Islands &amp; borders.</strong> In this expansion, start by drawing the borders of the Cyclades islands onto your sheet. Each island is defined by a mountain (each island has exactly one mountain). These borders mean two spaces separated by one of these borders are no longer considered adjacent. Shape placement is never affected by these borders — only adjacency for scoring.</p>' +
+        '<p><strong>Edicts.</strong> This expansion also comes with its own edict rules, listed under the Edicts tab. Use as many of them as you like in a game — start with one or two — and fill the rest of your edicts by drawing randomly from the base game (once drawn, set those aside and follow the physical card). Note that some base game edict rules aren\'t adapted for the Cyclades expansion.</p>' +
+        '<h4>Zeus expansion</h4>' +
+        '<p><strong>Lightning.</strong> Add the three white cards from the base game into the main deck. Each time a white card is drawn, tap the lightning icon: Zeus strikes the drawn space, destroying it just like lava.</p>' +
+        '<ul>' +
+        '<li>Lightning can never strike a mountain.</li>' +
+        '<li>Lightning can never strike the same row or column twice.</li>' +
+        '</ul>' +
+        '<p><strong>Variants.</strong> Zeus\'s lightning can feel quite unfair — as the wrath of a god should. If you\'d rather soften it, try one of these:</p>' +
+        '<ul>' +
+        '<li>The player may move the lightning\'s position by one space.</li>' +
+        '<li>The player may pay one coin (an offering to Zeus), once per season, to skip the lightning strike.</li>' +
+        '</ul>' +
+        '<h4>Random maps</h4>' +
+        '<p>Use the Random map settings to build your own maps. You\'ll need a blank Cartographers score sheet to play on — <a href="https://boardgamegeek.com/filepage/265416/default-map-with-all-empty-spaces" target="_blank" rel="noopener">download one here</a>.</p>' +
+        '<h4>Author</h4>' +
+        '<p>Made by Olivier Gouvert, vibe-coded with Claude. Tested by ЖK. The island and Zeus myth blurbs were written by ChatGPT, based on external sources.</p>' +
+        '<h4>License</h4>' +
+        '<p>This is unofficial, fan-made content and is not affiliated with, endorsed by, or sponsored by Thunderworks Games. <em>Cartographers</em>, its name, and its official artwork and components are the property of Thunderworks Games. This project is free and non-commercial, and doesn\'t reproduce or distribute any official game assets — every icon, map, and text here is original. If you enjoy it, please consider supporting Thunderworks Games by picking up the official game.</p>',
+    fr:
+        '<h4>De quoi s\'agit-il ?</h4>' +
+        '<p>Il s\'agit d\'une extension créée par un fan pour <em>Cartographers</em>, inspirée par la mythologie grecque et les îles des Cyclades. Elle ajoute deux modules indépendants, <strong>Cyclades</strong> et <strong>Zeus</strong>, utilisables séparément ou ensemble. Elle sert aussi de <strong>générateur de cartes</strong> général pour le jeu de base et pour la carte Nebblis.</p>' +
+        '<h4>Extension Cyclades</h4>' +
+        '<p><strong>Îles et bordures.</strong> Dans cette extension, commencez par tracer les bordures des îles des Cyclades sur votre feuille. Chaque île est définie par une montagne (chaque île compte exactement une montagne). Ces bordures signifient que deux cases séparées par l\'une d\'elles ne sont plus considérées comme adjacentes. Elles n\'affectent jamais le placement des formes : seulement l\'adjacence.</p>' +
+        '<p><strong>Édits.</strong> Cette extension apporte aussi ses propres règles d\'édits, listées dans l\'onglet Édits. Utilisez-en autant que vous le souhaitez dans une partie (commencez par une ou deux) et complétez le reste de vos édits en en tirant au hasard parmi ceux du jeu de base (une fois tirés, mettez-les de côté et suivez la carte physique). Notez que certaines règles d\'édits du jeu de base ne sont pas adaptées à l\'extension Cyclades.</p>' +
+        '<h4>Extension Zeus</h4>' +
+        '<p><strong>Foudre.</strong> Ajoutez les trois cartes blanches du jeu de base dans la pioche principale. Chaque fois qu\'une carte blanche est tirée, appuyez sur l\'icône éclair : Zeus frappe la case tirée et la détruit, tout comme la lave.</p>' +
+        '<ul>' +
+        '<li>La foudre ne peut jamais frapper une montagne.</li>' +
+        '<li>La foudre ne peut jamais frapper deux fois la même ligne ou la même colonne.</li>' +
+        '</ul>' +
+        '<p><strong>Variantes.</strong> La foudre de Zeus peut sembler assez injuste : c\'est bien la colère d\'un dieu. Si vous préférez l\'adoucir, essayez l\'une de ces variantes :</p>' +
+        '<ul>' +
+        '<li>Le joueur peut déplacer la position de la foudre d\'une case.</li>' +
+        '<li>Le joueur peut payer une pièce (une offrande à Zeus), une fois par saison, pour ne pas tirer la foudre.</li>' +
+        '</ul>' +
+        '<h4>Cartes aléatoires</h4>' +
+        '<p>Utilisez les réglages de carte aléatoire pour créer vos propres cartes. Il vous faudra une feuille Cartographers vierge pour jouer : <a href="https://boardgamegeek.com/filepage/265416/default-map-with-all-empty-spaces" target="_blank" rel="noopener">téléchargez-la ici</a>.</p>' +
+        '<h4>Auteur</h4>' +
+        '<p>Créé par Olivier Gouvert, développé en « vibe coding » avec Claude. Testé par ЖK. Les textes des mythes des îles et de Zeus ont été rédigés par ChatGPT, à partir de sources externes.</p>' +
+        '<h4>Licence</h4>' +
+        '<p>Ce contenu est non officiel, créé par un fan, et n\'est ni affilié à, ni approuvé, ni sponsorisé par Thunderworks Games. <em>Cartographers</em>, son nom, ainsi que ses illustrations et composants officiels sont la propriété de Thunderworks Games. Ce projet est gratuit, non commercial, et ne reproduit ni ne distribue aucun élément officiel du jeu : chaque icône, carte et texte présenté ici est original. Si vous appréciez ce projet, pensez à soutenir Thunderworks Games en vous procurant le jeu officiel.</p>'
+};
+</script>
+<script>
+
+let GRID_COLS = 11;
+let GRID_ROWS = 11;
+const CELL = 50;
+
+function parseCoord(str){
+    const rowLetter = str.charAt(0).toUpperCase();
+    const col = parseInt(str.slice(1), 10);
+    return {
+        x: col - 1,
+        y: rowLetter.charCodeAt(0) - 65
+    };
+}
+function cellKey(x,y){ return x + "," + y; }
+
+const MAPS = {
+    A:{
+        mountains:["B2","F4","D9","I10","J6"],
+        temples:["B5","D8","G7","H3","K1","J9"],
+        templeAlpha:1,
+        blocked:[],
+        volcano:[]
+    },
+    B:{
+        mountains:["B10","D4","F7","I3","I10"],
+        temples:["B4","B9","F2","G8","G11","J6"],
+        templeAlpha:1,
+        blocked:["B2","C2","F10","F11","G10","J1","J2"],
+        volcano:[]
+    },
+    C:{
+        mountains:["C3","B8","F10","I7","J2"],
+        temples:["B3","B9","F5","H2","K6","I10"],
+        templeAlpha:1,
+        blocked:["E6","E7","F6","F7"],
+        volcano:["E6","E7","F6","F7"]
+    },
+    D:{
+        mountains:["B7","D3","G2","I8","J5"],
+        temples:["B2","D6","D10","H3","I9","K6"],
+        templeAlpha:1,
+        blocked:["E10","E11","F10","F11"],
+        volcano:["E10","E11","F10","F11"]
+    },
+    C1:{
+        mountains:["B4","C9","F6","I3","J8"],
+        temples:["B6","C2","C10","I2","J6","I10"],
+        templeAlpha:1,
+        blocked:[],
+        volcano:[]
+    },
+    C2:{
+        mountains:["B9","C4","H6","I10","J3"],
+        temples:["B7","C3","E7","G2","H9","J5"],
+        templeAlpha:1,
+        blocked:["E5","F5","D6","E6","F6","G6","F7"],
+        volcano:[]
+    },
+};
+
+let currentRules = [];
+let currentRuleIndex = 0;
+let currentViewMode = "map";
+
+const SEASON_ICONS = ["🌱", "☀️", "🍂", "❄️"];
+const SEASON_LABEL_KEYS = ["seasonSpring", "seasonSummer", "seasonAutumn", "seasonWinter"];
+const SEASON_HIGHLIGHTS = [[0, 1], [1, 2], [2, 3], [3, 0]];
+const SEASON_TURN_COUNTS = ["8", "8/7", "7", "6"];
+let currentSeason = 0;
+
+function toggleSeason(){
+    currentSeason = (currentSeason + 1) % SEASON_ICONS.length;
+    drawRules();
+}
+
+function shuffleArray(arr){
+    const out = [...arr];
+    for(let i=out.length-1;i>0;i--){
+        const j = Math.floor(rand()*(i+1));
+        [out[i],out[j]] = [out[j],out[i]];
+    }
+    return out;
+}
+
+function generateRules(){
+    const shuffledTypes = shuffleArray(RULE_TYPES);
+    currentRules = shuffledTypes.map((type, i)=>({
+        letter:String.fromCharCode(65+i),
+        type,
+        ruleIndex:Math.floor(rand()*RULE_POOL.en[type].length),
+        state:0
+    }));
+    currentRuleIndex = Math.floor(rand()*currentRules.length);
+    currentSeason = 0;
+    drawRules();
+}
+
+function toggleRuleCollapse(i){
+    if(!currentRules[i]) return;
+    currentRules[i].state = (currentRules[i].state + 1) % 2;
+    drawRules();
+}
+
+function drawRules(){
+    const box = document.getElementById("rulesText");
+    const seeCard = UI_TEXT[currentLang].seeEdictCard;
+    const seasonIcon = SEASON_ICONS[currentSeason];
+    const seasonName = UI_TEXT[currentLang][SEASON_LABEL_KEYS[currentSeason]];
+    const seasonTurns = SEASON_TURN_COUNTS[currentSeason];
+    const seasonAria = UI_TEXT[currentLang].seasonAria;
+    const highlighted = SEASON_HIGHLIGHTS[currentSeason];
+    const seasonBtn = '<button type="button" class="season-btn" onclick="toggleSeason()" aria-label="' + escapeHtml(seasonAria) + '">' +
+        '<span class="season-btn-icon">' + seasonIcon + '</span>' +
+        '<span class="season-btn-label">' + escapeHtml(seasonName) + '</span>' +
+        '<span class="season-btn-timer">(' + seasonTurns + ')</span>' +
+    '</button>';
+    box.innerHTML = seasonBtn + '<ul class="rules-list">' +
+        currentRules.map((item, i) => {
+            const state = item.state || 0;
+            const ruleText = RULE_POOL[currentLang][item.type][item.ruleIndex];
+            let body = "";
+            if(state === 0) body = '<span class="rule-copy">' + escapeHtml(ruleText) + '</span>';
+            else if(state === 1) body = '<span class="rule-copy rule-copy-hint">' + escapeHtml(seeCard) + '</span>';
+            const isHighlighted = highlighted.includes(i);
+            return '<li class="rule-item' + (isHighlighted ? ' season-highlight' : '') + '" onclick="toggleRuleCollapse(' + i + ')">' +
+                '<span class="rule-letter">' + item.letter + '.</span>' +
+                '<span class="rule-type">' + item.type + '</span>' +
+                body +
+            '</li>';
+        }).join("") +
+        '</ul>';
+}
+
+function setViewMode(mode){
+    if(mode === "rules" && !cycladesMode) return;
+    currentViewMode = mode;
+    const isRules = mode === "rules";
+    document.getElementById("mapTab").classList.toggle("active", !isRules);
+    document.getElementById("rulesTab").classList.toggle("active", isRules);
+    document.getElementById("mapTab").setAttribute("aria-selected", String(!isRules));
+    document.getElementById("rulesTab").setAttribute("aria-selected", String(isRules));
+    document.getElementById("rulesText").hidden = !isRules;
+    document.getElementById("canvas").style.display = isRules ? "none" : "block";
+    document.getElementById("canvas").hidden = isRules;
+    document.getElementById("mapWrap").hidden = isRules;
+    updateLegendVisibility();
+}
+
+function wrapMixedWords(ctx, words, maxWidth){
+    const lines = [];
+    let line = [];
+    let lineWidth = 0;
+    for(const w of words){
+        ctx.font = w.font;
+        const wordWidth = ctx.measureText(w.text + " ").width;
+        if(line.length && lineWidth + wordWidth > maxWidth){
+            lines.push(line);
+            line = [];
+            lineWidth = 0;
+        }
+        line.push(w);
+        lineWidth += wordWidth;
+    }
+    if(line.length) lines.push(line);
+    return lines;
+}
+
+async function printMapAndRules(){
+    if(!currentGrid) return;
+    const FONT = "'Marcellus', 'Trebuchet MS', Arial, sans-serif";
+    const boldRuleFont = "bold 19px " + FONT;
+    const normalRuleFont = "19px " + FONT;
+    const hintRuleFont = "italic 19px " + FONT;
+    try{
+        await Promise.all([
+            document.fonts.load("23px 'Marcellus'"),
+            document.fonts.load("19px 'Marcellus'"),
+            document.fonts.load("bold 19px 'Marcellus'"),
+            document.fonts.load("italic 19px 'Marcellus'"),
+            document.fonts.load("bold 13px 'Marcellus'"),
+            document.fonts.load("24px 'Special Elite'")
+        ]);
+    }catch(e){   }
+    const mapW = canvas.width;
+    const mapH = canvas.height;
+    const pad = 24;
+    const titleH = 50;
+    const titleMapGap = 14;
+    const mapRulesGap = 56;
+    const lineH = 30;
+    const ruleGap = 12;
+    const labelFont = "20px " + FONT;
+    const rowLabelW = 34;
+    const colLabelH = 34;
+    const cellW = mapW / GRID_COLS;
+    const cellH = mapH / GRID_ROWS;
+    const mapX = pad + rowLabelW;
+    const textMaxWidth = mapW - pad*2;
+    const seeCard = UI_TEXT[currentLang].seeEdictCard;
+
+    const measure = document.createElement("canvas").getContext("2d");
+    const ruleBlocks = cycladesMode ? currentRules.map(item => {
+        const state = item.state || 0;
+        const words = [
+            { text: item.letter + ".", font: boldRuleFont },
+            { text: item.type + " —", font: boldRuleFont }
+        ];
+        if(state === 0){
+            const ruleText = RULE_POOL[currentLang][item.type][item.ruleIndex];
+            words.push(...ruleText.split(" ").map(w => ({ text: w, font: normalRuleFont })));
+        } else if(state === 1){
+            words.push(...seeCard.split(" ").map(w => ({ text: w, font: hintRuleFont })));
+        }
+        return { lines: wrapMixedWords(measure, words, textMaxWidth) };
+    }) : [];
+
+    let rulesHeight = 0;
+    if(cycladesMode){
+        rulesHeight = mapRulesGap;
+        ruleBlocks.forEach(b => { rulesHeight += b.lines.length*lineH + ruleGap; });
+    }
+
+    const showCoordList = randomMapMode;
+    let coordBlocks = [];
+    let coordHeight = 0;
+    if(showCoordList){
+        const {mountains, temples, volcano, wastelands} = sortedCoords(currentMapConfig);
+        coordBlocks = [
+            "⛰️ " + mountains.join(" - "),
+            "🏛️ " + temples.join(" - ")
+        ];
+        if(volcano) coordBlocks.push("🌋 " + volcano);
+        if(wastelands) coordBlocks.push("🪨 " + wastelands);
+        coordBlocks = coordBlocks.map(text => ({ lines: wrapMixedWords(measure, text.split(" ").map(w => ({ text: w, font: normalRuleFont })), textMaxWidth) }));
+        coordHeight = mapRulesGap;
+        coordBlocks.forEach(b => { coordHeight += b.lines.length*lineH + ruleGap; });
+    }
+
+    const totalW = mapW + pad*2 + rowLabelW;
+    const totalH = titleH + titleMapGap + mapH + colLabelH + rulesHeight + coordHeight + pad*2;
+
+    const out = document.createElement("canvas");
+    out.width = totalW;
+    out.height = totalH;
+    const octx = out.getContext("2d");
+
+    octx.fillStyle = "#fdfaf3";
+    octx.fillRect(0, 0, totalW, totalH);
+
+    const codeText = randomSeedInput.value.trim();
+    const titleWord = UI_TEXT[currentLang].mapTitleWord;
+    const MONO_FONT = "'Special Elite', 'Courier New', monospace";
+    octx.fillStyle = "#0d3b66";
+    octx.textAlign = "left";
+    if(codeText){
+        const wordFont = "bold 23px " + FONT;
+        const codeFont = "24px " + MONO_FONT;
+        const sep = " · ";
+        octx.font = wordFont;
+        const wordW = octx.measureText(titleWord).width;
+        octx.font = "23px " + FONT;
+        const sepW = octx.measureText(sep).width;
+        octx.font = codeFont;
+        const codeW = octx.measureText(codeText).width;
+        const totalTitleW = wordW + sepW + codeW;
+        let x = totalW/2 - totalTitleW/2;
+        const y = pad + 26;
+        octx.font = wordFont;
+        octx.fillText(titleWord, x, y);
+        x += wordW;
+        octx.font = "23px " + FONT;
+        octx.fillText(sep, x, y);
+        x += sepW;
+        octx.font = codeFont;
+        octx.fillText(codeText, x, y);
+    } else {
+        octx.font = "bold 23px " + FONT;
+        octx.textAlign = "center";
+        octx.fillText(titleWord, totalW/2, pad + 26);
+    }
+
+    draw(currentGrid, currentSeeds, currentIslands, currentN, currentMapConfig, currentBlocked, new Set());
+    const mapY = titleH + titleMapGap;
+    octx.drawImage(canvas, mapX, mapY);
+    draw(currentGrid, currentSeeds, currentIslands, currentN, currentMapConfig, currentBlocked, struckCells);
+
+    octx.strokeStyle = "#0d3b66";
+    octx.lineWidth = 3;
+    octx.strokeRect(mapX + 1.5, mapY + 1.5, mapW - 3, mapH - 3);
+
+    octx.font = labelFont;
+    octx.fillStyle = "#0d3b66";
+    octx.textAlign = "center";
+    octx.textBaseline = "middle";
+    for(let r=0;r<GRID_ROWS;r++){
+        octx.fillText(String.fromCharCode(65+r), mapX - rowLabelW/2, mapY + r*cellH + cellH/2);
+    }
+    for(let c=0;c<GRID_COLS;c++){
+        octx.fillText(String(c+1), mapX + c*cellW + cellW/2, mapY + mapH + colLabelH/2);
+    }
+    octx.textBaseline = "alphabetic";
+
+    let y = titleH + titleMapGap + mapH + colLabelH + mapRulesGap;
+    octx.textAlign = "left";
+
+    coordBlocks.forEach(b => {
+        b.lines.forEach(line => {
+            let x = mapX;
+            line.forEach(w => {
+                octx.font = w.font;
+                octx.fillStyle = "#0d3b66";
+                const withSpace = w.text + " ";
+                octx.fillText(withSpace, x, y);
+                x += octx.measureText(withSpace).width;
+            });
+            y += lineH;
+        });
+        y += ruleGap;
+    });
+
+    if(ruleBlocks.length && coordBlocks.length){
+        y += mapRulesGap - ruleGap;
+    }
+
+    ruleBlocks.forEach(b => {
+        b.lines.forEach(line => {
+            let x = mapX;
+            line.forEach(w => {
+                octx.font = w.font;
+                octx.fillStyle = w.font === boldRuleFont ? "#0d3b66" : "#222";
+                const withSpace = w.text + " ";
+                octx.fillText(withSpace, x, y);
+                x += octx.measureText(withSpace).width;
+            });
+            y += lineH;
+        });
+        y += ruleGap;
+    });
+
+    document.getElementById("saveOverlayImg").src = out.toDataURL("image/png");
+    document.getElementById("saveOverlay").classList.add("active");
+}
+
+function closeSaveOverlay(){
+    document.getElementById("saveOverlay").classList.remove("active");
+}
+
+function openInfoBox(){
+    document.getElementById("infoOverlay").classList.add("active");
+    document.querySelector(".info-box-scroll").scrollTop = 0;
+}
+
+function closeInfoBox(){
+    document.getElementById("infoOverlay").classList.remove("active");
+}
+
+function updateLegendVisibility(){
+    const show = cycladesMode && currentViewMode !== "rules";
+    document.getElementById("legend").style.display = show ? "flex" : "none";
+    document.getElementById("legend").hidden = !show;
+}
+
+const MAP_MENU_OPTIONS = {
+    manual: [["C1","Map A"],["C2","Map B"],["A","Map C"],["B","Map D"],["C","Map N1"],["D","Map N2"]]
+};
+
+const PRESET_CODE_BY_KEY = {};
+const PRESET_KEY_BY_CODE = {};
+MAP_MENU_OPTIONS.manual.forEach(([key, name])=>{
+    const code = name.replace(/^Map\s*/i, "");
+    PRESET_CODE_BY_KEY[key] = code;
+    PRESET_KEY_BY_CODE[code] = key;
+});
+
+const GRID_DIM_MIN = 9;
+const GRID_DIM_MAX = 15;
+let lastRandomRows = 11;
+let lastRandomCols = 11;
+
+const FEATURE_COUNT_MIN = 0;
+const FEATURE_COUNT_MAX = 9;
+let lastRandomMountains = 5;
+let lastRandomTemples = 6;
+
+const WASTELAND_DEFAULT = 0;
+
+function activeRawConfig(){
+    if(randomMapMode){
+        return {
+            gridCols: lastRandomCols,
+            gridRows: lastRandomRows,
+            numMountains: lastRandomMountains,
+            numTemples: lastRandomTemples,
+            templeAlpha: 1,
+            random: true,
+            mountainMinDist: 6,
+            templeMinDist: 5
+        };
+    }
+    return MAPS[lastManualMapValue];
+}
+
+function updateMapControls(){
+    updateShareCodeField();
+
+    mapSelectInput.value = lastManualMapValue;
+    document.getElementById("mapSelectWrap").style.display = randomMapMode ? "none" : "";
+
+    document.getElementById("settingsPanelHeaderRow").style.display = randomMapMode ? "" : "none";
+    document.getElementById("settingsPanelBody").style.display = (randomMapMode && settingsExpanded) ? "" : "none";
+    document.getElementById("settingsToggleBtn").setAttribute("aria-expanded", String(settingsExpanded));
+    document.getElementById("settingsToggleIcon").classList.toggle("expanded", settingsExpanded);
+    document.getElementById("resetRandomBtn").style.display = (randomMapMode && !isRandomConfigDefault()) ? "" : "none";
+
+    document.getElementById("rowsValue").value = String(lastRandomRows);
+    document.getElementById("rowsDown").disabled = lastRandomRows <= GRID_DIM_MIN;
+    document.getElementById("rowsUp").disabled = lastRandomRows >= GRID_DIM_MAX;
+    document.getElementById("colsValue").value = String(lastRandomCols);
+    document.getElementById("colsDown").disabled = lastRandomCols <= GRID_DIM_MIN;
+    document.getElementById("colsUp").disabled = lastRandomCols >= GRID_DIM_MAX;
+
+    document.getElementById("mountainsValue").value = String(lastRandomMountains);
+    document.getElementById("mountainsDown").disabled = lastRandomMountains <= FEATURE_COUNT_MIN;
+    document.getElementById("mountainsUp").disabled = lastRandomMountains >= FEATURE_COUNT_MAX;
+    document.getElementById("templesValue").value = String(lastRandomTemples);
+    document.getElementById("templesDown").disabled = lastRandomTemples <= FEATURE_COUNT_MIN;
+    document.getElementById("templesUp").disabled = lastRandomTemples >= FEATURE_COUNT_MAX;
+
+    const wastelandGroup = document.getElementById("wastelandGroup");
+    wastelandGroup.classList.toggle("disabled", !randomMapMode);
+    const manualConfig = MAPS[lastManualMapValue];
+    const manualWastelandCount = randomMapMode ? wastelandCount
+        : (manualConfig?.blocked?.length || 0) - (manualConfig?.volcano?.length || 0);
+    document.getElementById("wastelandValue").value = String(manualWastelandCount);
+    document.getElementById("wastelandValue").disabled = !randomMapMode;
+    document.getElementById("wastelandUp").disabled = !randomMapMode;
+    document.getElementById("wastelandDown").disabled = !randomMapMode || wastelandCount <= WASTELAND_MIN;
+
+    const volcanoWrap = document.getElementById("volcanoToggleWrap");
+    const volcanoAllowed = randomMapMode;
+    volcanoWrap.classList.toggle("disabled", !volcanoAllowed);
+    document.getElementById("volcanoToggle").disabled = !volcanoAllowed;
+    document.getElementById("volcanoToggle").checked = randomMapMode
+        ? volcanoEnabled
+        : (manualConfig?.volcano?.length > 0);
+}
+function toggleRandomMap(checked){ randomMapMode=checked; updateMapControls(); generate(); }
+
+let settingsExpanded = false;
+function toggleSettingsPanel(){
+    settingsExpanded = !settingsExpanded;
+    updateMapControls();
+}
+
+let volcanoEnabled = false;
+function toggleVolcano(checked){
+    volcanoEnabled = checked;
+    generate();
+}
+
+const WASTELAND_MIN = 0;
+const WASTELAND_STEP = 1;
+let wastelandCount = 0;
+function adjustWasteland(delta){
+    wastelandCount = Math.max(WASTELAND_MIN, wastelandCount + delta*WASTELAND_STEP);
+    updateMapControls();
+    generate();
+}
+
+function setWastelandFromInput(value){
+    const n = parseInt(value, 10);
+    if(Number.isFinite(n)) wastelandCount = Math.max(WASTELAND_MIN, n);
+    updateMapControls();
+    generate();
+}
+
+function adjustRows(delta){
+    lastRandomRows = Math.min(GRID_DIM_MAX, Math.max(GRID_DIM_MIN, lastRandomRows + delta));
+    wastelandCount = WASTELAND_DEFAULT;
+    updateMapControls();
+    generate();
+}
+function setRowsFromInput(value){
+    const n = parseInt(value, 10);
+    if(Number.isFinite(n)) lastRandomRows = Math.min(GRID_DIM_MAX, Math.max(GRID_DIM_MIN, n));
+    wastelandCount = WASTELAND_DEFAULT;
+    updateMapControls();
+    generate();
+}
+function adjustCols(delta){
+    lastRandomCols = Math.min(GRID_DIM_MAX, Math.max(GRID_DIM_MIN, lastRandomCols + delta));
+    wastelandCount = WASTELAND_DEFAULT;
+    updateMapControls();
+    generate();
+}
+function setColsFromInput(value){
+    const n = parseInt(value, 10);
+    if(Number.isFinite(n)) lastRandomCols = Math.min(GRID_DIM_MAX, Math.max(GRID_DIM_MIN, n));
+    wastelandCount = WASTELAND_DEFAULT;
+    updateMapControls();
+    generate();
+}
+
+function adjustMountains(delta){
+    lastRandomMountains = Math.min(FEATURE_COUNT_MAX, Math.max(FEATURE_COUNT_MIN, lastRandomMountains + delta));
+    updateMapControls();
+    generate();
+}
+function setMountainsFromInput(value){
+    const n = parseInt(value, 10);
+    if(Number.isFinite(n)) lastRandomMountains = Math.min(FEATURE_COUNT_MAX, Math.max(FEATURE_COUNT_MIN, n));
+    updateMapControls();
+    generate();
+}
+function adjustTemples(delta){
+    lastRandomTemples = Math.min(FEATURE_COUNT_MAX, Math.max(FEATURE_COUNT_MIN, lastRandomTemples + delta));
+    updateMapControls();
+    generate();
+}
+function setTemplesFromInput(value){
+    const n = parseInt(value, 10);
+    if(Number.isFinite(n)) lastRandomTemples = Math.min(FEATURE_COUNT_MAX, Math.max(FEATURE_COUNT_MIN, n));
+    updateMapControls();
+    generate();
+}
+
+function isRandomConfigDefault(){
+    return lastRandomRows === RANDOM_ROW_DEFAULT
+        && lastRandomCols === RANDOM_COL_DEFAULT
+        && lastRandomMountains === RANDOM_MOUNTAINS_DEFAULT
+        && lastRandomTemples === RANDOM_TEMPLES_DEFAULT
+        && wastelandCount === WASTELAND_DEFAULT
+        && !volcanoEnabled;
+}
+
+function resetRandomDefaults(){
+    lastRandomRows = RANDOM_ROW_DEFAULT;
+    lastRandomCols = RANDOM_COL_DEFAULT;
+    lastRandomMountains = RANDOM_MOUNTAINS_DEFAULT;
+    lastRandomTemples = RANDOM_TEMPLES_DEFAULT;
+    wastelandCount = WASTELAND_DEFAULT;
+    volcanoEnabled = false;
+    updateMapControls();
+    generate();
+}
+
+function shuffleMap(){
+    setRandomSeed(randomSeedValue());
+    generate();
+}
+
+function toggleCyclades(checked){
+    cycladesMode = checked;
+    updateMapControls();
+    updateLegendVisibility();
+    resetIslandInfo();
+    updateEdictTabAvailability();
+    if(currentGrid){
+        if(cycladesMode && currentIslands.length === 0 && currentMapConfig){
+            const seedPositions = currentMapConfig.mountains.map(coord=>{
+                const p = parseCoord(coord);
+                return [p.x, p.y];
+            });
+            const grown = growIslands(seedPositions, currentBlocked, GRID_ROWS*GRID_COLS - currentBlocked.size);
+            currentGrid = grown.grid;
+            currentSeeds = grown.seeds;
+            currentIslands = computeIslandMeta(currentMapConfig, currentGrid, currentBlocked, grown.sizes);
+        }
+        draw(currentGrid, currentSeeds, currentIslands, currentN, currentMapConfig, currentBlocked, struckCells);
+    }
+}
+
+function updateEdictTabAvailability(){
+    const rulesTab = document.getElementById("rulesTab");
+    rulesTab.disabled = !cycladesMode;
+    rulesTab.setAttribute("aria-disabled", String(!cycladesMode));
+    if(!cycladesMode && currentViewMode === "rules"){
+        setViewMode("map");
+    }
+}
+
+const UI_TEXT = {
+    en:{
+        tapHint:"Tap an island to see its story.",
+        lastStrike:"Last strike",
+        zeusResting:"Zeus is resting",
+        coordsLabel:"Feature coordinates",
+        ruleLabel:"Edict",
+        randomMapLabel:"Random map",
+        cycladesLabel:"Cyclades",
+        seedLabel:"Code",
+        wastelandLabel:"Wastelands",
+        volcanoLabel:"Volcano",
+        seeEdictCard:"See edict card",
+        saveOverlayHint:"Press and hold the image to save it.",
+        saveOverlayClose:"Close",
+        infoBoxTitle:"Cartographers Cyclades",
+        infoBoxClose:"Close",
+        drawMap:"Draw map",
+        printLabel:"View map and edicts as image",
+        coordsBtnLabel:"Mountain & ruins coordinates",
+        infoLabel:"Information",
+        languageLabel:"Language",
+        rowsLabel:"Rows",
+        rowsAria:"Rows",
+        colsLabel:"Cols",
+        colsAria:"Columns",
+        mountainsLabel:"Mountains",
+        templesLabel:"Ruins",
+        moreRows:"More rows",
+        fewerRows:"Fewer rows",
+        moreColumns:"More columns",
+        fewerColumns:"Fewer columns",
+        moreWastelands:"More wastelands",
+        fewerWastelands:"Fewer wastelands",
+        moreMountains:"More mountains",
+        fewerMountains:"Fewer mountains",
+        moreTemples:"More ruins",
+        fewerTemples:"Fewer ruins",
+        settingsLabel:"Settings",
+        resetDefaultLabel:"Reset defaults",
+        resetDefaultAria:"Reset default settings",
+        strikeLightning:"Strike lightning",
+        resetLightning:"Reset lightning",
+        mapOrEdicts:"Map or edicts",
+        mapTabLabel:"Map",
+        edictsTabLabel:"Edicts",
+        mapSelectAria:"Map",
+        mapCodeAria:"Map code",
+        copyCodeAria:"Copy code",
+        saveImageAlt:"Cyclades map and edicts",
+        mapOptionA:"Map A",
+        mapOptionB:"Map B",
+        mapOptionC:"Map C",
+        mapOptionD:"Map D",
+        mapOptionN1:"Map N1",
+        mapOptionN2:"Map N2",
+        mapTitleWord:"Map",
+        seasonAria:"Change season",
+        seasonSpring:"Spring",
+        seasonSummer:"Summer",
+        seasonAutumn:"Autumn",
+        seasonWinter:"Winter"
+    },
+    fr:{
+        tapHint:"Touchez une île pour découvrir son histoire.",
+        lastStrike:"Dernier éclair",
+        zeusResting:"Zeus se repose",
+        coordsLabel:"Coordonnées des éléments",
+        ruleLabel:"Édit",
+        randomMapLabel:"Carte aléatoire",
+        cycladesLabel:"Cyclades",
+        seedLabel:"Code",
+        wastelandLabel:"Friches",
+        volcanoLabel:"Volcan",
+        seeEdictCard:"Voir la carte Édit",
+        saveOverlayHint:"Appuyez longuement sur l'image pour l'enregistrer.",
+        saveOverlayClose:"Fermer",
+        infoBoxTitle:"Cartographers Cyclades",
+        infoBoxClose:"Fermer",
+        drawMap:"Tracer la carte",
+        printLabel:"Voir la carte et les édits en image",
+        coordsBtnLabel:"Coordonnées des montagnes et ruines",
+        infoLabel:"Informations",
+        languageLabel:"Langue",
+        rowsLabel:"Lignes",
+        rowsAria:"Lignes",
+        colsLabel:"Col.",
+        colsAria:"Colonnes",
+        mountainsLabel:"Montagnes",
+        templesLabel:"Ruines",
+        moreRows:"Plus de lignes",
+        fewerRows:"Moins de lignes",
+        moreColumns:"Plus de colonnes",
+        fewerColumns:"Moins de colonnes",
+        moreWastelands:"Plus de friches",
+        fewerWastelands:"Moins de friches",
+        moreMountains:"Plus de montagnes",
+        fewerMountains:"Moins de montagnes",
+        moreTemples:"Plus de ruines",
+        fewerTemples:"Moins de ruines",
+        settingsLabel:"Réglages",
+        resetDefaultLabel:"Réinitialiser",
+        resetDefaultAria:"Réinitialiser les réglages par défaut",
+        strikeLightning:"Frapper la foudre",
+        resetLightning:"Réinitialiser la foudre",
+        mapOrEdicts:"Carte ou édits",
+        mapTabLabel:"Carte",
+        edictsTabLabel:"Édits",
+        mapSelectAria:"Carte",
+        mapCodeAria:"Code de la carte",
+        copyCodeAria:"Copier le code",
+        saveImageAlt:"Carte des Cyclades et édits",
+        mapOptionA:"Carte A",
+        mapOptionB:"Carte B",
+        mapOptionC:"Carte C",
+        mapOptionD:"Carte D",
+        mapOptionN1:"Carte N1",
+        mapOptionN2:"Carte N2",
+        mapTitleWord:"Carte",
+        seasonAria:"Changer de saison",
+        seasonSpring:"Printemps",
+        seasonSummer:"Été",
+        seasonAutumn:"Automne",
+        seasonWinter:"Hiver"
+    }
+};
+
+let currentLang = "en";
+let randomMapMode = false;
+let randomSeed = null;
+let seededRandomState = null;
+
+function randomSeedValue(){ return Math.floor(Math.random()*195112); }
+function seededRandom(){ seededRandomState=(seededRandomState*1664525+1013904223)>>>0; return seededRandomState/4294967296; }
+function rand(){ return seededRandom(); }
+function setRandomSeed(seed){ const n=Number(seed); randomSeed=Number.isFinite(n)?(Math.abs(Math.floor(n))||1):randomSeedValue(); seededRandomState=randomSeed>>>0; }
+
+const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+function toBase58(num){
+    if(num === 0) return BASE58_ALPHABET[0];
+    let s = "";
+    let n = Math.floor(num);
+    while(n > 0){
+        s = BASE58_ALPHABET[n % 58] + s;
+        n = Math.floor(n / 58);
+    }
+    return s;
+}
+function fromBase58(str){
+    if(!str) return NaN;
+    let n = 0;
+    for(const ch of str){
+        const idx = BASE58_ALPHABET.indexOf(ch);
+        if(idx === -1) return NaN;
+        n = n * 58 + idx;
+    }
+    return n;
+}
+
+function toBase58Padded(num, length){
+    let s = toBase58(num);
+    while(s.length < length) s = BASE58_ALPHABET[0] + s;
+    return s;
+}
+
+function toBijectiveBase58(num){
+    let n = Math.floor(num);
+    if(n <= 0) return "";
+    let s = "";
+    while(n > 0){
+        n -= 1;
+        s = BASE58_ALPHABET[n % 58] + s;
+        n = Math.floor(n / 58);
+    }
+    return s;
+}
+function fromBijectiveBase58(str){
+    if(!str) return 0;
+    let n = 0;
+    for(const ch of str){
+        const idx = BASE58_ALPHABET.indexOf(ch);
+        if(idx === -1) return NaN;
+        n = n * 58 + (idx + 1);
+    }
+    return n;
+}
+
+const RANDOM_DIM_SPAN = GRID_DIM_MAX - GRID_DIM_MIN + 1;
+const RANDOM_FEATURE_SPAN = FEATURE_COUNT_MAX - FEATURE_COUNT_MIN + 1;
+const RANDOM_WASTELAND_MAX = 127;
+const RANDOM_WASTELAND_SPAN = RANDOM_WASTELAND_MAX + 1;
+const RANDOM_ROW_DEFAULT = 11;
+const RANDOM_COL_DEFAULT = 11;
+const RANDOM_MOUNTAINS_DEFAULT = 5;
+const MOUNTAIN_WASTELAND_ADJ_WEIGHT = 60;
+const RANDOM_TEMPLES_DEFAULT = 6;
+const TEMPLE_BORDER_WEIGHT = 4;
+
+function toDefaultOffset(value, defaultValue, span){
+    return (((value - defaultValue) % span) + span) % span;
+}
+function fromDefaultOffset(offset, defaultValue, span){
+    return (((offset + defaultValue) % span) + span) % span;
+}
+
+function buildMapConfigSegment(){
+    if(randomMapMode){
+        const wc = Math.min(RANDOM_WASTELAND_MAX, Math.max(0, wastelandCount));
+        const mountains = Math.min(FEATURE_COUNT_MAX, Math.max(FEATURE_COUNT_MIN, lastRandomMountains));
+        const temples = Math.min(FEATURE_COUNT_MAX, Math.max(FEATURE_COUNT_MIN, lastRandomTemples));
+        const cols = Math.min(GRID_DIM_MAX, Math.max(GRID_DIM_MIN, lastRandomCols));
+        const rows = Math.min(GRID_DIM_MAX, Math.max(GRID_DIM_MIN, lastRandomRows));
+
+        const rowOffset = toDefaultOffset(rows, RANDOM_ROW_DEFAULT, RANDOM_DIM_SPAN);
+        const colOffset = toDefaultOffset(cols, RANDOM_COL_DEFAULT, RANDOM_DIM_SPAN);
+        const mountainsOffset = toDefaultOffset(mountains, RANDOM_MOUNTAINS_DEFAULT, RANDOM_FEATURE_SPAN);
+        const templesOffset = toDefaultOffset(temples, RANDOM_TEMPLES_DEFAULT, RANDOM_FEATURE_SPAN);
+
+        let n = rowOffset;
+        n = n*RANDOM_DIM_SPAN + colOffset;
+        n = n*RANDOM_FEATURE_SPAN + mountainsOffset;
+        n = n*RANDOM_FEATURE_SPAN + templesOffset;
+        n = n*RANDOM_WASTELAND_SPAN + wc;
+        return (volcanoEnabled ? "n" : "r") + toBijectiveBase58(n);
+    }
+    return PRESET_CODE_BY_KEY[lastManualMapValue] || lastManualMapValue;
+}
+
+function buildShareCode(){
+    const mapStr = buildMapConfigSegment();
+    const seedVal = Math.abs(Math.floor(randomSeed || 1)) % 195112;
+    const seedStr = toBase58Padded(seedVal, 3);
+    return mapStr + "-" + seedStr + (cycladesMode ? "*" : "");
+}
+
+function updateShareCodeField(){
+    document.getElementById("randomSeedInput").value = buildShareCode();
+}
+
+let copyFeedbackTimer = null;
+function copyShareCode(){
+    const value = document.getElementById("randomSeedInput").value;
+    const showCopied = ()=>{
+        const btn = document.getElementById("copyCodeBtn");
+        btn.classList.add("copied");
+        const icon = document.getElementById("copyCodeIcon");
+        icon.innerHTML = '<polyline points="4 12 9 17 20 6"/>';
+        clearTimeout(copyFeedbackTimer);
+        copyFeedbackTimer = setTimeout(()=>{
+            btn.classList.remove("copied");
+            icon.innerHTML = '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+        }, 1400);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(value).then(showCopied).catch(()=>{
+            fallbackCopy(value, showCopied);
+        });
+    } else {
+        fallbackCopy(value, showCopied);
+    }
+}
+function fallbackCopy(value, onSuccess){
+    const ta = document.createElement("textarea");
+    ta.value = value;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{ document.execCommand("copy"); onSuccess(); }catch(e){}
+    document.body.removeChild(ta);
+}
+
+function applyShareCode(code){
+    let str = String(code).trim();
+    const cyclades = str.endsWith("*");
+    if(cyclades) str = str.slice(0, -1);
+
+    const dashIdx = str.indexOf("-");
+    const mapStr = dashIdx === -1 ? str : str.slice(0, dashIdx);
+    const presetCodes = Object.keys(PRESET_KEY_BY_CODE);
+    const isPreset = presetCodes.includes(mapStr);
+    const isDefaultRandomCode = mapStr === "Z";
+    const isNewRandomCode = mapStr.length > 0 && (mapStr[0] === "r" || mapStr[0] === "n");
+
+    if(dashIdx === -1 && !isPreset && !isDefaultRandomCode && !isNewRandomCode){
+        randomSeed = null;
+        generate();
+        return;
+    }
+
+    let seedVal = null;
+    if(dashIdx !== -1){
+        const seedStr = str.slice(dashIdx + 1);
+        seedVal = fromBase58(seedStr);
+        if(!Number.isFinite(seedVal) || seedVal < 0){
+            randomSeed = null;
+            generate();
+            return;
+        }
+    }
+
+    cycladesMode = cyclades;
+
+    if(isPreset){
+        randomMapMode = false;
+        lastManualMapValue = PRESET_KEY_BY_CODE[mapStr];
+    } else if(isDefaultRandomCode){
+        randomMapMode = true;
+        lastRandomCols = 11;
+        lastRandomRows = 11;
+        lastRandomMountains = 5;
+        lastRandomTemples = 6;
+        wastelandCount = WASTELAND_DEFAULT;
+        volcanoEnabled = false;
+    } else if(isNewRandomCode){
+        const n0 = fromBijectiveBase58(mapStr.slice(1));
+        if(!Number.isFinite(n0) || n0 < 0){
+            randomMapMode = false;
+            lastManualMapValue = PRESET_KEY_BY_CODE[presetCodes[0]];
+        } else {
+            randomMapMode = true;
+            volcanoEnabled = mapStr[0] === "n";
+            let n = n0;
+            const wc = n % RANDOM_WASTELAND_SPAN; n = Math.floor(n/RANDOM_WASTELAND_SPAN);
+            const templesOffset = n % RANDOM_FEATURE_SPAN; n = Math.floor(n/RANDOM_FEATURE_SPAN);
+            const mountainsOffset = n % RANDOM_FEATURE_SPAN; n = Math.floor(n/RANDOM_FEATURE_SPAN);
+            const colOffset = n % RANDOM_DIM_SPAN; n = Math.floor(n/RANDOM_DIM_SPAN);
+            const rowOffset = n;
+
+            wastelandCount = Math.min(RANDOM_WASTELAND_MAX, Math.max(0, wc));
+            lastRandomMountains = fromDefaultOffset(mountainsOffset, RANDOM_MOUNTAINS_DEFAULT, RANDOM_FEATURE_SPAN);
+            lastRandomTemples = fromDefaultOffset(templesOffset, RANDOM_TEMPLES_DEFAULT, RANDOM_FEATURE_SPAN);
+            lastRandomCols = GRID_DIM_MIN + fromDefaultOffset(colOffset, RANDOM_COL_DEFAULT - GRID_DIM_MIN, RANDOM_DIM_SPAN);
+            lastRandomRows = GRID_DIM_MIN + fromDefaultOffset(rowOffset, RANDOM_ROW_DEFAULT - GRID_DIM_MIN, RANDOM_DIM_SPAN);
+        }
+    } else {
+        const n0 = fromBase58(mapStr);
+        if(!Number.isFinite(n0) || n0 < 0){
+            randomMapMode = false;
+            lastManualMapValue = PRESET_KEY_BY_CODE[presetCodes[0]];
+        } else {
+            randomMapMode = true;
+            let n = n0;
+            const volcano = n % 2; n = Math.floor(n/2);
+            const slotB = n % 7; n = Math.floor(n/7);
+            const slotA = n % 7; n = Math.floor(n/7);
+            const temples = n % 10; n = Math.floor(n/10);
+            const mountains = n % 10; n = Math.floor(n/10);
+            const wc = n;
+
+            volcanoEnabled = !!volcano;
+            wastelandCount = Math.min(255, Math.max(0, wc));
+            lastRandomMountains = Math.min(FEATURE_COUNT_MAX, mountains);
+            lastRandomTemples = Math.min(FEATURE_COUNT_MAX, temples);
+            lastRandomCols = GRID_DIM_MIN + Math.min(slotA, GRID_DIM_MAX-GRID_DIM_MIN);
+            lastRandomRows = GRID_DIM_MIN + Math.min(slotB, GRID_DIM_MAX-GRID_DIM_MIN);
+        }
+    }
+
+    randomSeed = (seedVal != null ? seedVal : randomSeedValue()) || 1;
+
+    document.getElementById("randomMapToggle").checked = randomMapMode;
+    document.getElementById("cycladesToggle").checked = cycladesMode;
+
+    generate();
+}
+let cycladesMode = true;
+let lastManualMapValue = "C1";
+let currentIslands = [];
+let currentGrid = null;
+let currentBlocked = new Set();
+let currentMapConfig = null;
+let currentSeeds = null;
+let currentN = 0;
+let struckCells = new Set();
+let lastStrikeKey = null;
+let lastStrikeStoryIndex = null;
+let zeusSequence = [];
+let zeusIndex = 0;
+let zeusResting = false;
+
+function formatCoord(x,y){
+    return String.fromCharCode(65+y) + (x+1);
+}
+let selectedIslandIndex = null;
+let infoMode = null;
+let currentZeusStoryIndex = null;
+
+function setLang(lang){
+    currentLang = (lang === "fr") ? "fr" : "en";
+    applyTranslations();
+    if(infoMode === "island" && selectedIslandIndex != null && currentIslands[selectedIslandIndex]){
+        showIslandInfo(currentIslands[selectedIslandIndex], selectedIslandIndex);
+    } else if(infoMode === "zeus" && currentZeusStoryIndex != null){
+        showZeusStory(currentZeusStoryIndex);
+    } else if(infoMode === "zeus-resting"){
+        showZeusResting();
+    } else if(infoMode === "coords"){
+        showCoordList();
+    }
+    drawRules();
+    drawZeusResult();
+}
+
+function applyTranslations(){
+    const t = UI_TEXT[currentLang];
+    document.getElementById("langToggle").value = currentLang;
+    document.getElementById("tapHint").textContent = t.tapHint;
+    document.getElementById("randomMapLabelText").textContent = t.randomMapLabel;
+    document.getElementById("cycladesLabelText").textContent = t.cycladesLabel;
+    document.getElementById("seedLabelText").textContent = t.seedLabel;
+    document.getElementById("wastelandLabelText").textContent = t.wastelandLabel;
+    document.getElementById("volcanoLabelText").textContent = t.volcanoLabel;
+    document.getElementById("saveOverlayHint").textContent = t.saveOverlayHint;
+    document.getElementById("saveOverlayClose").setAttribute("aria-label", t.saveOverlayClose);
+    document.getElementById("saveOverlayClose").setAttribute("title", t.saveOverlayClose);
+    document.getElementById("infoBoxTitle").textContent = t.infoBoxTitle;
+    document.getElementById("infoBoxText").innerHTML = INFO_HTML[currentLang];
+    document.getElementById("infoBoxClose").setAttribute("aria-label", t.infoBoxClose);
+    document.getElementById("infoBoxClose").setAttribute("title", t.infoBoxClose);
+    document.getElementById("islandInfoClose").setAttribute("aria-label", t.infoBoxClose);
+    document.getElementById("islandInfoClose").setAttribute("title", t.infoBoxClose);
+    document.documentElement.lang = currentLang;
+
+    const generateBtn = document.getElementById("generateBtn");
+    generateBtn.setAttribute("aria-label", t.drawMap);
+    generateBtn.title = t.drawMap;
+    const printBtn = document.getElementById("printBtn");
+    printBtn.setAttribute("aria-label", t.printLabel);
+    printBtn.title = t.printLabel;
+    const coordsBtn = document.getElementById("coordsBtn");
+    coordsBtn.setAttribute("aria-label", t.coordsBtnLabel);
+    coordsBtn.title = t.coordsBtnLabel;
+    const infoBtn = document.getElementById("infoBtn");
+    infoBtn.setAttribute("aria-label", t.infoLabel);
+    infoBtn.title = t.infoLabel;
+    document.getElementById("langToggle").setAttribute("aria-label", t.languageLabel);
+
+    document.getElementById("rowsLabelText").textContent = t.rowsLabel;
+    document.getElementById("rowsValue").setAttribute("aria-label", t.rowsAria);
+    document.getElementById("rowsUp").setAttribute("aria-label", t.moreRows);
+    document.getElementById("rowsDown").setAttribute("aria-label", t.fewerRows);
+    document.getElementById("colsLabelText").textContent = t.colsLabel;
+    document.getElementById("colsValue").setAttribute("aria-label", t.colsAria);
+    document.getElementById("colsUp").setAttribute("aria-label", t.moreColumns);
+    document.getElementById("colsDown").setAttribute("aria-label", t.fewerColumns);
+    document.getElementById("wastelandValue").setAttribute("aria-label", t.wastelandLabel);
+    document.getElementById("wastelandUp").setAttribute("aria-label", t.moreWastelands);
+    document.getElementById("wastelandDown").setAttribute("aria-label", t.fewerWastelands);
+    document.getElementById("mountainsLabelText").textContent = t.mountainsLabel;
+    document.getElementById("mountainsValue").setAttribute("aria-label", t.mountainsLabel);
+    document.getElementById("mountainsUp").setAttribute("aria-label", t.moreMountains);
+    document.getElementById("mountainsDown").setAttribute("aria-label", t.fewerMountains);
+    document.getElementById("templesLabelText").textContent = t.templesLabel;
+    document.getElementById("templesValue").setAttribute("aria-label", t.templesLabel);
+    document.getElementById("templesUp").setAttribute("aria-label", t.moreTemples);
+    document.getElementById("templesDown").setAttribute("aria-label", t.fewerTemples);
+
+    document.getElementById("settingsToggleLabel").textContent = t.settingsLabel;
+    const resetRandomBtn = document.getElementById("resetRandomBtn");
+    resetRandomBtn.setAttribute("aria-label", t.resetDefaultAria);
+    resetRandomBtn.title = t.resetDefaultAria;
+
+    const zeusBtn = document.getElementById("zeusBtn");
+    zeusBtn.setAttribute("aria-label", t.strikeLightning);
+    zeusBtn.title = t.strikeLightning;
+    const zeusResetBtn = document.getElementById("zeusResetBtn");
+    zeusResetBtn.setAttribute("aria-label", t.resetLightning);
+    zeusResetBtn.title = t.resetLightning;
+
+    document.querySelector(".view-menu").setAttribute("aria-label", t.mapOrEdicts);
+    document.getElementById("mapTab").textContent = t.mapTabLabel;
+    document.getElementById("rulesTab").textContent = t.edictsTabLabel;
+
+    document.getElementById("mapSelect").setAttribute("aria-label", t.mapSelectAria);
+    document.getElementById("mapOptionA").textContent = t.mapOptionA;
+    document.getElementById("mapOptionB").textContent = t.mapOptionB;
+    document.getElementById("mapOptionC").textContent = t.mapOptionC;
+    document.getElementById("mapOptionD").textContent = t.mapOptionD;
+    document.getElementById("mapOptionN1").textContent = t.mapOptionN1;
+    document.getElementById("mapOptionN2").textContent = t.mapOptionN2;
+
+    document.getElementById("randomSeedInput").setAttribute("aria-label", t.mapCodeAria);
+    document.getElementById("randomSeedInput").setAttribute("placeholder", t.seedLabel);
+    document.getElementById("copyCodeBtn").setAttribute("aria-label", t.copyCodeAria);
+    document.getElementById("copyCodeBtn").title = t.copyCodeAria;
+    document.getElementById("saveOverlayImg").setAttribute("alt", t.saveImageAlt);
+
+    drawRules();
+}
+
+const FOUR_COLOR_PALETTE = [
+    "#2E6F9E",
+    "#F5F1E6",
+    "#C1652F",
+    "#C9A66B"
+];
+
+const SINGLE_ISLAND_COLOR = "#F5F1E6";
+
+function buildAdjacency(grid,n,blockedSet){
+    let adj = [];
+    for(let i=0;i<n;i++) adj.push(new Set());
+    for(let y=0;y<GRID_ROWS;y++){
+        for(let x=0;x<GRID_COLS;x++){
+            if(blockedSet.has(cellKey(x,y))) continue;
+            const r = grid[y][x];
+            if(r===-1) continue;
+            if(x<GRID_COLS-1 && !blockedSet.has(cellKey(x+1,y)) && grid[y][x+1]!==-1 && grid[y][x+1]!==r){
+                adj[r].add(grid[y][x+1]);
+                adj[grid[y][x+1]].add(r);
+            }
+            if(y<GRID_ROWS-1 && !blockedSet.has(cellKey(x,y+1)) && grid[y+1][x]!==-1 && grid[y+1][x]!==r){
+                adj[r].add(grid[y+1][x]);
+                adj[grid[y+1][x]].add(r);
+            }
+        }
+    }
+    return adj;
+}
+
+function fourColorRegions(adj,n){
+    const order = [...Array(n).keys()].sort((a,b)=>adj[b].size-adj[a].size);
+    const colorOf = Array(n).fill(-1);
+
+    function backtrack(k){
+        if(k===n) return true;
+        const region = order[k];
+        for(let c=0;c<4;c++){
+            let conflict=false;
+            for(const neighbor of adj[region]){
+                if(colorOf[neighbor]===c){ conflict=true; break; }
+            }
+            if(!conflict){
+                colorOf[region]=c;
+                if(backtrack(k+1)) return true;
+                colorOf[region]=-1;
+            }
+        }
+        return false;
+    }
+    backtrack(0);
+    return colorOf;
+}
+
+function randomIslands(n){
+    const shuffledNames = [...CYCLADES_NAMES].sort(()=>rand()-0.5);
+    let islands=[];
+    for(let i=0;i<n;i++){
+        const name = shuffledNames[i];
+        islands.push({
+            name: name,
+            lore_en: CYCLADES_LORE[name],
+            lore_fr: CYCLADES_LORE_FR[name]
+        });
+    }
+    return islands;
+}
+
+function computeIslandMeta(mapConfig, grid, blockedSet, sizes){
+    const N = mapConfig.mountains.length;
+    const islands = randomIslands(N);
+    const adjacency = buildAdjacency(grid, N, blockedSet);
+    const colorIndices = fourColorRegions(adjacency, N);
+    for(let i=0;i<N;i++){
+        islands[i].color = FOUR_COLOR_PALETTE[colorIndices[i]];
+        islands[i].cellCount = sizes[i];
+    }
+    return islands;
+}
+
+const mapSelectInput = document.getElementById("mapSelect");
+mapSelectInput.addEventListener("change", ()=>{
+    lastManualMapValue = mapSelectInput.value;
+    generate();
+});
+const randomSeedInput=document.getElementById("randomSeedInput");
+randomSeedInput.addEventListener("change",()=>{ applyShareCode(randomSeedInput.value); });
+randomSeedInput.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); randomSeedInput.blur(); }});
+
+const canvas = document.getElementById("canvas");
+canvas.width = GRID_COLS * CELL;
+canvas.height = GRID_ROWS * CELL;
+const ctx = canvas.getContext("2d");
+
+function applyCanvasDisplaySize(){
+    const prevWidth = canvas.style.width;
+    const prevHeight = canvas.style.height;
+    canvas.style.width = "";
+    canvas.style.height = "";
+    const target = canvas.getBoundingClientRect().width;
+    if(!target || !GRID_COLS || !GRID_ROWS){
+        canvas.style.width = prevWidth;
+        canvas.style.height = prevHeight;
+        return;
+    }
+    const longerCount = Math.max(GRID_COLS, GRID_ROWS);
+    const scale = target / longerCount;
+    canvas.style.width = (GRID_COLS * scale) + "px";
+    canvas.style.height = (GRID_ROWS * scale) + "px";
+    document.getElementById("colLabels").style.width = canvas.getBoundingClientRect().width + "px";
+}
+window.addEventListener("resize", applyCanvasDisplaySize);
+
+function updateGridLabels(){
+    const rowLabels = document.getElementById("rowLabels");
+    const colLabels = document.getElementById("colLabels");
+    rowLabels.innerHTML = "";
+    for(let y=0;y<GRID_ROWS;y++){
+        const el = document.createElement("span");
+        el.textContent = String.fromCharCode(65+y);
+        rowLabels.appendChild(el);
+    }
+    colLabels.innerHTML = "";
+    for(let x=0;x<GRID_COLS;x++){
+        const el = document.createElement("span");
+        el.textContent = String(x+1);
+        colLabels.appendChild(el);
+    }
+}
+
+function neighbours(x,y){
+    let out=[];
+    if(x>0) out.push([x-1,y]);
+    if(x<GRID_COLS-1) out.push([x+1,y]);
+    if(y>0) out.push([x,y-1]);
+    if(y<GRID_ROWS-1) out.push([x,y+1]);
+    return out;
+}
+
+function growIslands(seedPositions, blockedSet, targetAssigned){
+    const N = seedPositions.length;
+
+    let grid=[];
+    for(let y=0;y<GRID_ROWS;y++)
+        grid[y]=Array(GRID_COLS).fill(-1);
+
+    let frontiers=[];
+    let seeds=[];
+
+    for(let i=0;i<N;i++){
+        let x=seedPositions[i][0];
+        let y=seedPositions[i][1];
+        grid[y][x]=i;
+        seeds.push({x,y});
+        frontiers[i]=[];
+        for(let n of neighbours(x,y)){
+            const [nx,ny]=n;
+            if(!blockedSet.has(cellKey(nx,ny))) frontiers[i].push(n);
+        }
+    }
+
+    let assigned=N;
+    let sizes=Array(N).fill(1);
+
+    while(assigned<targetAssigned){
+
+        let active=[];
+        for(let i=0;i<N;i++)
+            if(frontiers[i].length>0)
+                active.push(i);
+
+        if(active.length===0) break;
+
+        let region=
+            active[Math.floor(rand()*active.length)];
+
+        let index=
+            Math.floor(rand()*frontiers[region].length);
+
+        let [x,y]=frontiers[region].splice(index,1)[0];
+
+        if(grid[y][x]!=-1)
+            continue;
+
+        grid[y][x]=region;
+        sizes[region]++;
+        assigned++;
+
+        for(let n of neighbours(x,y)){
+            let [nx,ny]=n;
+            if(grid[ny][nx]==-1 && !blockedSet.has(cellKey(nx,ny)))
+                frontiers[region].push(n);
+        }
+    }
+
+    return {grid, seeds, sizes};
+}
+
+function isBorderCell(x,y){
+    return x===0 || x===GRID_COLS-1 || y===0 || y===GRID_ROWS-1;
+}
+
+const GIBBS_ITERATIONS_PER_ITEM = 25;
+const SPACING_WEIGHT = 2;
+
+function manhattan(a, b){
+    return Math.abs(a[0]-b[0]) + Math.abs(a[1]-b[1]);
+}
+
+function gibbsEnergy(c, others, minDist, extraEnergyFn){
+    let eSpacing = 0;
+    for(const o of others){
+        const d = manhattan(c, o);
+        if(d < minDist){
+            const violation = minDist - d;
+            eSpacing += violation * violation;
+        }
+    }
+
+    const eExtra = extraEnergyFn ? extraEnergyFn(c, others) : 0;
+
+    return SPACING_WEIGHT * eSpacing + eExtra;
+}
+
+function gibbsSampleOne(candidates, others, minDist, extraEnergyFn){
+    const energies = candidates.map(c => gibbsEnergy(c, others, minDist, extraEnergyFn));
+    const minE = Math.min(...energies);
+    const weights = energies.map(e => Math.exp(-(e - minE)));
+    const total = weights.reduce((a,b) => a+b, 0);
+
+    let r = rand() * total;
+    for(let i=0;i<candidates.length;i++){
+        r -= weights[i];
+        if(r <= 0) return candidates[i];
+    }
+    return candidates[candidates.length-1];
+}
+
+function pickSpacedCells(candidates, count, minDist, extraEnergyFn){
+    if(candidates.length===0 || count<=0) return [];
+
+    const pool = candidates.map(p => [p[0], p[1]]);
+    if(pool.length < count){
+        return pool.slice(0, count);
+    }
+
+    const shuffled = pool.slice();
+    for(let i=shuffled.length-1;i>0;i--){
+        const j = Math.floor(rand()*(i+1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const positions = shuffled.slice(0, count);
+
+    for(let sweep=0; sweep<GIBBS_ITERATIONS_PER_ITEM; sweep++){
+        for(let i=0;i<count;i++){
+            const others = positions.filter((_,idx) => idx!==i);
+            const occupied = new Set(others.map(o => cellKey(o[0], o[1])));
+            const freeCandidates = pool.filter(p => !occupied.has(cellKey(p[0], p[1])));
+
+            positions[i] = gibbsSampleOne(freeCandidates, others, minDist, extraEnergyFn);
+        }
+    }
+
+    return positions;
+}
+
+const WASTELAND_EPSILON = 0.02;
+
+function pickWastelandCells(wastelandCount, excludeSet){
+    const usedSet = new Set(excludeSet || []);
+    const pool = [];
+    for(let y=0;y<GRID_ROWS;y++)
+        for(let x=0;x<GRID_COLS;x++)
+            if(!usedSet.has(cellKey(x,y))) pool.push([x,y]);
+
+    if(pool.length===0 || wastelandCount<=0) return new Set();
+
+    const placedSet = new Set();
+
+    for(let i=0; i<wastelandCount; i++){
+        const free = pool.filter(p => !placedSet.has(cellKey(p[0], p[1])));
+        if(free.length===0) break;
+
+        const weights = free.map(([x,y]) => {
+            const touchesPlaced = neighbours(x,y).some(([nx,ny]) => placedSet.has(cellKey(nx,ny)));
+            return touchesPlaced ? 1 : WASTELAND_EPSILON;
+        });
+        const totalWeight = weights.reduce((s,w) => s+w, 0);
+
+        let r = rand() * totalWeight;
+        let cell = free[free.length-1];
+        for(let j=0; j<free.length; j++){
+            r -= weights[j];
+            if(r <= 0){ cell = free[j]; break; }
+        }
+
+        placedSet.add(cellKey(cell[0], cell[1]));
+    }
+
+    return placedSet;
+}
+
+function carveVolcano(){
+    let candidates = [];
+    for(let y=0;y<GRID_ROWS-1;y++)
+        for(let x=0;x<GRID_COLS-1;x++)
+            candidates.push([x,y]);
+    if(candidates.length===0) return new Set();
+    const [x,y] = candidates[Math.floor(rand()*candidates.length)];
+    return new Set([cellKey(x,y), cellKey(x+1,y), cellKey(x,y+1), cellKey(x+1,y+1)]);
+}
+
+function buildRandomMap(rawConfig, wastelandCount, volcanoEnabled){
+    let allCells=[];
+    for(let y=0;y<GRID_ROWS;y++)
+        for(let x=0;x<GRID_COLS;x++)
+            allCells.push([x,y]);
+
+    const volcanoSet = volcanoEnabled ? carveVolcano() : new Set();
+
+    const volcanoBuffer = new Set(volcanoSet);
+    for(const k of volcanoSet){
+        const [vx,vy] = k.split(",").map(Number);
+        for(const [nx,ny] of neighbours(vx,vy)) volcanoBuffer.add(cellKey(nx,ny));
+    }
+    const wastelandSet = pickWastelandCells(wastelandCount, volcanoBuffer);
+    const blockedSet = new Set([...volcanoSet, ...wastelandSet]);
+
+    const mountainCandidates = allCells.filter(([x,y]) => {
+        const k = cellKey(x,y);
+        if(blockedSet.has(k)) return false;
+        if(isBorderCell(x,y)) return false;
+        if(neighbours(x,y).some(([nx,ny]) => volcanoSet.has(cellKey(nx,ny)))) return false;
+        for(const vk of volcanoSet){
+            const [vx,vy] = vk.split(",").map(Number);
+            if(Math.abs(x-vx) + Math.abs(y-vy) < 3) return false;
+        }
+        return true;
+    });
+    const wastelandAdjacencyEnergy = ([x,y]) => {
+        const adjacentWastelandCount = neighbours(x,y).filter(([nx,ny]) => wastelandSet.has(cellKey(nx,ny))).length;
+        return MOUNTAIN_WASTELAND_ADJ_WEIGHT * adjacentWastelandCount;
+    };
+    const seedPositions = pickSpacedCells(mountainCandidates, rawConfig.numMountains, rawConfig.mountainMinDist, wastelandAdjacencyEnergy);
+    const mountainSet = new Set(seedPositions.map(([x,y])=>cellKey(x,y)));
+
+    let grid, seeds, sizes;
+    if(cycladesMode){
+        const grown = growIslands(seedPositions, blockedSet, GRID_ROWS*GRID_COLS - blockedSet.size);
+        grid = grown.grid; seeds = grown.seeds; sizes = grown.sizes;
+    } else {
+        grid = [];
+        for(let y=0;y<GRID_ROWS;y++){
+            grid[y] = [];
+            for(let x=0;x<GRID_COLS;x++) grid[y][x] = 0;
+        }
+        seeds = seedPositions.map(([x,y])=>({x,y}));
+        sizes = [];
+    }
+
+    const mountains = seedPositions.map(([x,y])=>formatCoord(x,y));
+
+    const templeCandidates = allCells.filter(([x,y]) => {
+        const k = cellKey(x,y);
+        if(mountainSet.has(k) || blockedSet.has(k)) return false;
+        if(cycladesMode && grid[y][x]===-1) return false;
+        return true;
+    });
+    const templeBorderEnergy = (c, others) => {
+        if(!isBorderCell(c[0], c[1])) return 0;
+        const otherBorderCount = others.filter(o => isBorderCell(o[0], o[1])).length;
+        return TEMPLE_BORDER_WEIGHT * otherBorderCount;
+    };
+    const temples = pickSpacedCells(templeCandidates, rawConfig.numTemples, rawConfig.templeMinDist, templeBorderEnergy)
+        .map(([x,y])=>formatCoord(x,y));
+
+    const blocked = [...blockedSet].map(k=>{
+        const [x,y] = k.split(",").map(Number);
+        return formatCoord(x,y);
+    });
+    const volcano = [...volcanoSet].map(k=>{
+        const [x,y] = k.split(",").map(Number);
+        return formatCoord(x,y);
+    });
+
+    const mapConfig = {
+        mountains,
+        temples,
+        templeAlpha: rawConfig.templeAlpha,
+        blocked,
+        volcano,
+        gridCols: GRID_COLS,
+        gridRows: GRID_ROWS
+    };
+
+    return {mapConfig, grid, seeds, sizes};
+}
+
+function generate(){
+
+    if(randomSeed===null) setRandomSeed(randomSeedValue());
+    else setRandomSeed(randomSeed);
+
+    updateMapControls();
+    const rawConfig = activeRawConfig();
+
+    GRID_COLS = rawConfig.gridCols || 11;
+    GRID_ROWS = rawConfig.gridRows || 11;
+    updateGridLabels();
+    canvas.width = GRID_COLS * CELL;
+    canvas.height = GRID_ROWS * CELL;
+    applyCanvasDisplaySize();
+
+    let mapConfig, grid, seeds, sizes, blockedSet;
+
+    if(rawConfig.random){
+        const built = buildRandomMap(rawConfig, wastelandCount, volcanoEnabled);
+        mapConfig = built.mapConfig;
+        grid = built.grid;
+        seeds = built.seeds;
+        sizes = built.sizes;
+        blockedSet = new Set(
+            mapConfig.blocked.map(c=>{ const p=parseCoord(c); return cellKey(p.x,p.y); })
+        );
+    } else {
+        mapConfig = rawConfig;
+        blockedSet = new Set(
+            mapConfig.blocked.map(c=>{ const p=parseCoord(c); return cellKey(p.x,p.y); })
+        );
+        if(cycladesMode){
+            const seedPositions = mapConfig.mountains.map(coord=>{
+                const p = parseCoord(coord);
+                return [p.x, p.y];
+            });
+            const built = growIslands(seedPositions, blockedSet, GRID_ROWS*GRID_COLS - blockedSet.size);
+            grid = built.grid;
+            seeds = built.seeds;
+            sizes = built.sizes;
+        } else {
+            grid = [];
+            for(let y=0;y<GRID_ROWS;y++){
+                grid[y] = [];
+                for(let x=0;x<GRID_COLS;x++) grid[y][x] = 0;
+            }
+            seeds = mapConfig.mountains.map(coord=>{ const p = parseCoord(coord); return {x:p.x, y:p.y}; });
+            sizes = [];
+        }
+    }
+
+    currentBlocked = blockedSet;
+
+    const N = mapConfig.mountains.length;
+    const islands = cycladesMode ? computeIslandMeta(mapConfig, grid, blockedSet, sizes) : [];
+
+    generateRules();
+
+    zeusSequence = precomputeZeusSequence(mapConfig, grid, blockedSet);
+    zeusIndex = 0;
+    struckCells = new Set();
+    lastStrikeKey = null;
+    lastStrikeStoryIndex = null;
+    zeusResting = false;
+    drawZeusResult();
+
+    draw(grid,seeds,islands,N,mapConfig,blockedSet,struckCells);
+    currentIslands = islands;
+    currentGrid = grid;
+    currentMapConfig = mapConfig;
+    currentSeeds = seeds;
+    currentN = N;
+    resetIslandInfo();
+    updateEdictTabAvailability();
+    drawRules();
+}
+
+function precomputeZeusSequence(mapConfig, grid, blockedSet){
+    const mountainKeys = new Set(
+        mapConfig.mountains.map(c=>{ const p=parseCoord(c); return cellKey(p.x,p.y); })
+    );
+    const usedRows = new Set();
+    const usedCols = new Set();
+    const sequence = [];
+
+    let storyPool = [];
+    function nextStoryIndex(){
+        if(storyPool.length === 0){
+            storyPool = ZEUS_STORIES.en.map((_, i) => i);
+            for(let i = storyPool.length - 1; i > 0; i--){
+                const j = Math.floor(rand() * (i + 1));
+                [storyPool[i], storyPool[j]] = [storyPool[j], storyPool[i]];
+            }
+        }
+        return storyPool.pop();
+    }
+
+    while(true){
+        let candidates = [];
+        for(let y=0;y<GRID_ROWS;y++){
+            if(usedRows.has(y)) continue;
+            for(let x=0;x<GRID_COLS;x++){
+                if(usedCols.has(x)) continue;
+                const k = cellKey(x,y);
+                if(blockedSet.has(k)) continue;
+                if(mountainKeys.has(k)) continue;
+                if(cycladesMode && grid[y][x]===-1) continue;
+                candidates.push(k);
+            }
+        }
+        if(candidates.length===0) break;
+
+        const pick = candidates[Math.floor(rand()*candidates.length)];
+        const [px,py] = pick.split(",").map(Number);
+        usedRows.add(py);
+        usedCols.add(px);
+
+        const storyIndex = nextStoryIndex();
+        sequence.push({key:pick, storyIndex});
+    }
+    return sequence;
+}
+
+function drawZeus(){
+    if(!currentGrid || !currentMapConfig) return;
+    if(zeusIndex >= zeusSequence.length){
+        zeusResting = true;
+        drawZeusResult();
+        showZeusResting();
+        return;
+    }
+
+    const {key, storyIndex} = zeusSequence[zeusIndex];
+    zeusIndex++;
+    struckCells.add(key);
+    lastStrikeKey = key;
+    lastStrikeStoryIndex = storyIndex;
+    drawZeusResult();
+
+    showZeusStory(storyIndex);
+
+    draw(currentGrid, currentSeeds, currentIslands, currentN, currentMapConfig, currentBlocked, struckCells);
+}
+
+function drawZeusResult(){
+    const el = document.getElementById("zeusResult");
+    document.getElementById("zeusResetBtn").style.display = (struckCells.size > 0 || zeusResting) ? "flex" : "none";
+    if(zeusResting){
+        el.textContent = UI_TEXT[currentLang].zeusResting;
+        el.classList.add("clickable");
+        el.setAttribute("role", "button");
+        el.setAttribute("tabindex", "0");
+        el.onclick = () => showZeusResting();
+        el.onkeydown = (e) => {
+            if(e.key === "Enter" || e.key === " "){
+                e.preventDefault();
+                showZeusResting();
+            }
+        };
+        return;
+    }
+    if(!lastStrikeKey){
+        el.textContent = "";
+        el.classList.remove("clickable");
+        el.onclick = null;
+        el.removeAttribute("role");
+        el.removeAttribute("tabindex");
+        el.onkeydown = null;
+        return;
+    }
+    const [sx,sy] = lastStrikeKey.split(",").map(Number);
+    el.textContent = UI_TEXT[currentLang].lastStrike + " " + formatCoord(sx,sy);
+    el.classList.add("clickable");
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.onclick = () => showZeusStory(lastStrikeStoryIndex);
+    el.onkeydown = (e) => {
+        if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            showZeusStory(lastStrikeStoryIndex);
+        }
+    };
+}
+
+function resetZeus(){
+    if(!currentGrid) return;
+    zeusIndex = 0;
+    struckCells = new Set();
+    lastStrikeKey = null;
+    lastStrikeStoryIndex = null;
+    zeusResting = false;
+    drawZeusResult();
+    resetIslandInfo();
+    draw(currentGrid, currentSeeds, currentIslands, currentN, currentMapConfig, currentBlocked, struckCells);
+}
+
+function fillEmojiCentered(text, cx, cy, size){
+    ctx.font = size + "px Arial";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    const m = ctx.measureText(text);
+    const left = m.actualBoundingBoxLeft;
+    const right = m.actualBoundingBoxRight;
+    const asc = m.actualBoundingBoxAscent;
+    const desc = m.actualBoundingBoxDescent;
+    let x, y;
+    if(left != null && right != null && asc != null && desc != null && (left || right)){
+        x = cx - (right - left) / 2;
+        y = cy + (asc - desc) / 2;
+    } else {
+        x = cx - m.width / 2;
+        y = cy + size * 0.35;
+    }
+    ctx.fillText(text, x, y);
+}
+
+function draw(grid,seeds,islands,N,mapConfig,blockedSet,struckCells){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const volcanoSet = new Set(
+        (mapConfig.volcano || []).map(c=>{ const p = parseCoord(c); return cellKey(p.x,p.y); })
+    );
+
+    for(let y=0;y<GRID_ROWS;y++){
+        for(let x=0;x<GRID_COLS;x++){
+            const px = x*CELL;
+            const py = y*CELL;
+            if(blockedSet.has(cellKey(x,y))){
+                if(volcanoSet.has(cellKey(x,y))){
+                    ctx.fillStyle="#8A3220";
+                } else {
+                    ctx.fillStyle="#8c8c8c";
+                }
+                ctx.fillRect(px,py,CELL,CELL);
+                continue;
+            }
+            if(cycladesMode && grid[y][x]===-1){
+                ctx.fillStyle="#8c8c8c";
+                ctx.fillRect(px,py,CELL,CELL);
+                continue;
+            }
+            const isMountainCell = mapConfig.mountains.some(coord=>{
+                const p = parseCoord(coord);
+                return p.x===x && p.y===y;
+            });
+            ctx.fillStyle = cycladesMode
+                ? islands[grid[y][x]].color
+                : (isMountainCell ? "#555555" : SINGLE_ISLAND_COLOR);
+            ctx.fillRect(px,py,CELL,CELL);
+        }
+    }
+
+    ctx.globalAlpha=0.06;
+    for(let y=0;y<GRID_ROWS;y++){
+        for(let x=0;x<GRID_COLS;x++){
+            if(blockedSet.has(cellKey(x,y))) continue;
+            ctx.fillStyle="#000";
+            for(let k=0;k<4;k++){
+                ctx.fillRect(
+                    x*CELL+rand()*CELL,
+                    y*CELL+rand()*CELL,
+                    1.6,1.6
+                );
+            }
+        }
+    }
+    ctx.globalAlpha=1;
+
+    ctx.save();
+    ctx.globalAlpha=0.5;
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle="#0d3b66";
+    ctx.lineWidth=1;
+    for(let x=0;x<=GRID_COLS;x++){
+        ctx.beginPath();
+        ctx.moveTo(x*CELL,0);
+        ctx.lineTo(x*CELL,GRID_ROWS*CELL);
+        ctx.stroke();
+    }
+    for(let y=0;y<=GRID_ROWS;y++){
+        ctx.beginPath();
+        ctx.moveTo(0,y*CELL);
+        ctx.lineTo(GRID_COLS*CELL,y*CELL);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    for(const coord of mapConfig.mountains){
+        const p = parseCoord(coord);
+        const my = cycladesMode ? p.y*CELL + CELL*0.32 : p.y*CELL + CELL/2;
+        fillEmojiCentered("⛰️", p.x*CELL + CELL/2, my, CELL*0.55);
+    }
+    for(const coord of mapConfig.temples){
+        const p = parseCoord(coord);
+        if(cycladesMode && grid[p.y][p.x]===-1) continue;
+        fillEmojiCentered("🏛️", p.x*CELL + CELL/2, p.y*CELL + CELL/2, CELL*0.55);
+    }
+
+    function regionOf(x,y){
+        if(volcanoSet.has(cellKey(x,y))) return -4;
+        if(blockedSet.has(cellKey(x,y))) return -2;
+        if(cycladesMode && grid[y][x]===-1) return -2;
+        return cycladesMode ? grid[y][x] : -3;
+    }
+    ctx.strokeStyle="#0d3b66";
+    ctx.lineWidth=4;
+    for(let y=0;y<GRID_ROWS;y++){
+        for(let x=0;x<GRID_COLS;x++){
+            const r = regionOf(x,y);
+            const left = x*CELL;
+            const top = y*CELL;
+
+            if(x<GRID_COLS-1 && regionOf(x+1,y)!=r){
+                ctx.beginPath();
+                ctx.moveTo(left+CELL,top);
+                ctx.lineTo(left+CELL,top+CELL);
+                ctx.stroke();
+            }
+            if(y<GRID_ROWS-1 && regionOf(x,y+1)!=r){
+                ctx.beginPath();
+                ctx.moveTo(left,top+CELL);
+                ctx.lineTo(left+CELL,top+CELL);
+                ctx.stroke();
+            }
+        }
+    }
+
+    if(cycladesMode){
+        ctx.font="bold 13px 'Marcellus', 'Trebuchet MS', Arial, sans-serif";
+        ctx.textAlign="center";
+        for(let i=0;i<N;i++){
+            let s=seeds[i];
+            const cx = s.x*CELL+CELL/2;
+            const cy = s.y*CELL+CELL*0.82;
+
+            ctx.lineWidth=3;
+            ctx.strokeStyle="#fff";
+            ctx.strokeText(
+                islands[i].name,
+                cx,
+                cy
+            );
+            ctx.fillStyle="#08304d";
+            ctx.fillText(
+                islands[i].name,
+                cx,
+                cy
+            );
+        }
+    }
+
+    if(struckCells && struckCells.size>0){
+        for(const k of struckCells){
+            const [sx,sy] = k.split(",").map(Number);
+            fillEmojiCentered("⚡️", sx*CELL+CELL/2, sy*CELL+CELL/2, CELL*0.55);
+        }
+    }
+
+}
+
+function sortedCoords(mapConfig){
+    const byReadingOrder = (a,b) => {
+        const pa = parseCoord(a), pb = parseCoord(b);
+        return pa.y - pb.y || pa.x - pb.x;
+    };
+    return {
+        mountains: [...mapConfig.mountains].sort(byReadingOrder),
+        temples: [...mapConfig.temples].sort(byReadingOrder),
+        volcano: formatVolcanoCoords(mapConfig.volcano),
+        wastelands: formatWastelandCoords(mapConfig)
+    };
+}
+
+function formatVolcanoCoords(volcano){
+    if(!volcano || volcano.length === 0) return null;
+    const points = volcano.map(parseCoord);
+    const rowLetters = points.map(p => String.fromCharCode(65 + p.y));
+    const colNumbers = points.map(p => p.x + 1);
+    const rowMin = rowLetters.reduce((a,b) => a < b ? a : b);
+    const rowMax = rowLetters.reduce((a,b) => a > b ? a : b);
+    const colMin = Math.min(...colNumbers);
+    const colMax = Math.max(...colNumbers);
+    return rowMin + "-" + rowMax + " ∩ " + colMin + "-" + colMax;
+}
+
+function formatWastelandCoords(mapConfig){
+    const volcanoSet = new Set(mapConfig.volcano || []);
+    const cells = (mapConfig.blocked || []).filter(c => !volcanoSet.has(c));
+    if(cells.length === 0) return null;
+    const byReadingOrder = (a,b) => {
+        const pa = parseCoord(a), pb = parseCoord(b);
+        return pa.y - pb.y || pa.x - pb.x;
+    };
+    const byKey = new Map(cells.map(c => {
+        const p = parseCoord(c);
+        return [cellKey(p.x,p.y), c];
+    }));
+    const visited = new Set();
+    const groups = [];
+    for(const c of cells){
+        const p = parseCoord(c);
+        const k = cellKey(p.x,p.y);
+        if(visited.has(k)) continue;
+        visited.add(k);
+        const stack = [[p.x,p.y]];
+        const group = [c];
+        while(stack.length){
+            const [cx,cy] = stack.pop();
+            for(const [nx,ny] of neighbours(cx,cy)){
+                const nk = cellKey(nx,ny);
+                if(byKey.has(nk) && !visited.has(nk)){
+                    visited.add(nk);
+                    group.push(byKey.get(nk));
+                    stack.push([nx,ny]);
+                }
+            }
+        }
+        groups.push(group.sort(byReadingOrder));
+    }
+    groups.sort((a,b) => byReadingOrder(a[0], b[0]));
+    return groups.map(g => g.join(" - ")).join("; ");
+}
+
+function resetIslandInfo(){
+    selectedIslandIndex = null;
+    currentZeusStoryIndex = null;
+    infoMode = null;
+    document.getElementById("tapHint").style.display = "block";
+    document.getElementById("islandInfo").style.display = "none";
+    updateLegendVisibility();
+}
+
+function showCoordList(){
+    if(!currentMapConfig) return;
+    infoMode = "coords";
+    document.getElementById("legend").style.display = "flex";
+    document.getElementById("legend").hidden = false;
+    document.getElementById("tapHint").style.display = "none";
+    const info = document.getElementById("islandInfo");
+    info.style.display = "flex";
+    document.getElementById("infoSwatch").style.display = "none";
+    document.getElementById("islandInfoClose").style.display = "";
+    document.getElementById("infoName").textContent = UI_TEXT[currentLang].coordsLabel;
+    const {mountains, temples, volcano, wastelands} = sortedCoords(currentMapConfig);
+    document.getElementById("infoDesc").innerHTML =
+        "⛰️ " + mountains.join(" - ") + "<br>🏛️ " + temples.join(" - ") +
+        (volcano ? "<br>🌋 " + volcano : "") +
+        (wastelands ? "<br>🪨 " + wastelands : "");
+}
+
+function toggleCoordList(){
+    if(!currentMapConfig) return;
+    if(infoMode === "coords"){
+        resetIslandInfo();
+    } else {
+        showCoordList();
+    }
+}
+
+function showIslandInfo(isl, index){
+    selectedIslandIndex = index;
+    infoMode = "island";
+    document.getElementById("tapHint").style.display = "none";
+    const info = document.getElementById("islandInfo");
+    info.style.display = "flex";
+    const swatch = document.getElementById("infoSwatch");
+    swatch.style.display = "";
+    swatch.style.background = isl.color;
+    document.getElementById("islandInfoClose").style.display = "";
+    document.getElementById("infoName").textContent = isl.name;
+    const loreText = currentLang === "fr" ? isl.lore_fr : isl.lore_en;
+    const sourceUrl = CYCLADES_SOURCES[isl.name];
+    document.getElementById("infoDesc").innerHTML =
+        escapeHtml(loreText) +
+        (sourceUrl ? ' <a class="source-link" href="' + sourceUrl + '" target="_blank" rel="noopener">🔍</a>' : "");
+}
+
+function showZeusStory(storyIndex){
+    infoMode = "zeus";
+    currentZeusStoryIndex = storyIndex;
+    document.getElementById("legend").style.display = "flex";
+    document.getElementById("legend").hidden = false;
+    document.getElementById("tapHint").style.display = "none";
+    const info = document.getElementById("islandInfo");
+    info.style.display = "flex";
+    const swatch = document.getElementById("infoSwatch");
+    swatch.style.display = "";
+    swatch.style.background = "#d9a441";
+    document.getElementById("islandInfoClose").style.display = "";
+    document.getElementById("infoName").textContent = ZEUS_TITLE[currentLang];
+    const storyText = ZEUS_STORIES[currentLang][storyIndex];
+    const sourceUrl = ZEUS_SOURCES[storyIndex];
+    document.getElementById("infoDesc").innerHTML =
+        escapeHtml(storyText) +
+        (sourceUrl ? ' <a class="source-link" href="' + sourceUrl + '" target="_blank" rel="noopener">🔍</a>' : "");
+}
+
+function showZeusResting(){
+    infoMode = "zeus-resting";
+    currentZeusStoryIndex = null;
+    document.getElementById("legend").style.display = "flex";
+    document.getElementById("legend").hidden = false;
+    document.getElementById("tapHint").style.display = "none";
+    const info = document.getElementById("islandInfo");
+    info.style.display = "flex";
+    const swatch = document.getElementById("infoSwatch");
+    swatch.style.display = "";
+    swatch.style.background = "#d9a441";
+    document.getElementById("islandInfoClose").style.display = "";
+    document.getElementById("infoName").textContent = ZEUS_RESTING_TITLE[currentLang];
+    document.getElementById("infoDesc").innerHTML =
+        escapeHtml(ZEUS_RESTING_STORY[currentLang]) +
+        ' <a class="source-link" href="' + ZEUS_RESTING_SOURCE + '" target="_blank" rel="noopener">🔍</a>';
+}
+
+function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function handleCanvasTap(e){
+    if(!currentGrid || !cycladesMode) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const px = (e.clientX - rect.left) * scaleX;
+    const py = (e.clientY - rect.top) * scaleY;
+    const gx = Math.floor(px / CELL);
+    const gy = Math.floor(py / CELL);
+    if(gx < 0 || gx >= GRID_COLS || gy < 0 || gy >= GRID_ROWS) return;
+    if(currentBlocked.has(cellKey(gx,gy))) return;
+    const regionIndex = currentGrid[gy][gx];
+    if(regionIndex == null || regionIndex < 0) return;
+    showIslandInfo(currentIslands[regionIndex], regionIndex);
+}
+
+canvas.addEventListener("click", handleCanvasTap);
+
+applyTranslations();
+setViewMode('map');
+generate();
+
+if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(() => {
+        if(currentGrid) draw(currentGrid, currentSeeds, currentIslands, currentN, currentMapConfig, currentBlocked, struckCells);
+    });
+}
+
+</script>
+</body>
+</html>
