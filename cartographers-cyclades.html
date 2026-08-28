@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cyclades</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1485,10 +1485,10 @@ async function printMapAndRules(){
         ruleBlocks.forEach(b => { rulesHeight += b.lines.length*lineH + ruleGap; });
     }
 
-    const showCoordList = randomMapMode;
+    const includeCoordList = randomMapMode;
     let coordBlocks = [];
     let coordHeight = 0;
-    if(showCoordList){
+    if(includeCoordList){
         const {mountains, temples, volcano, wastelands} = sortedCoords(currentMapConfig);
         coordBlocks = [
             "⛰️ " + mountains.join(" - "),
@@ -2390,7 +2390,7 @@ function fourColorRegions(adj,n){
 }
 
 function randomIslands(n){
-    const shuffledNames = [...CYCLADES_NAMES].sort(()=>rand()-0.5);
+    const shuffledNames = shuffleArray(CYCLADES_NAMES);
     let islands=[];
     for(let i=0;i<n;i++){
         const name = shuffledNames[i];
@@ -2754,7 +2754,15 @@ function generate(){
             mapConfig.blocked.map(c=>{ const p=parseCoord(c); return cellKey(p.x,p.y); })
         );
     } else {
-        mapConfig = rawConfig;
+        // Copy the preset: currentMapConfig outlives this call, and a mutation
+        // through it would corrupt MAPS for the rest of the session.
+        mapConfig = {
+            ...rawConfig,
+            mountains:[...rawConfig.mountains],
+            temples:[...rawConfig.temples],
+            blocked:[...rawConfig.blocked],
+            volcano:[...rawConfig.volcano]
+        };
         blockedSet = new Set(
             mapConfig.blocked.map(c=>{ const p=parseCoord(c); return cellKey(p.x,p.y); })
         );
@@ -3245,7 +3253,9 @@ function showZeusResting(){
 function escapeHtml(str){
     const div = document.createElement("div");
     div.textContent = str;
-    return div.innerHTML;
+    // textContent -> innerHTML leaves quotes intact; drawRules puts the result
+    // inside an attribute, so they have to go too.
+    return div.innerHTML.replace(/"/g, "&quot;");
 }
 
 function handleCanvasTap(e){
